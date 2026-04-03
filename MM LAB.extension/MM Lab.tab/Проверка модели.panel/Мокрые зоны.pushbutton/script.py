@@ -210,6 +210,8 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
 
     Клик по ячейке Id элемента — выделяет помещение в модели
     и открывает его на подходящем виде.
+    Клик по строке основного помещения раскрывает/скрывает
+    подстроки с информацией о пересекающихся мокрых помещениях.
     """
     from Autodesk.Revit.DB import ElementId
     from System.Windows.Forms import (
@@ -218,10 +220,18 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
         Cursors,
     )
     from System.Drawing import Color, FontStyle
+    from System import Array, String
+
+    # Тег для служебного столбца: "main" или "detail"
+    ROW_TAG_COL = 4
+    # Словарь: row_index основной строки -> список row_index подстрок
+    detail_map = {}
+    # Множество индексов основных строк
+    main_rows = set()
 
     frm = Form()
     frm.Text = "Отчёт: помещения под мокрыми зонами"
-    frm.Size = Size(700, 500)
+    frm.Size = Size(750, 500)
     frm.StartPosition = FormStartPosition.CenterScreen
 
     # Заголовок
@@ -252,58 +262,109 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
         DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText
     )
 
-    dgv.ColumnCount = 4
+    dgv.ColumnCount = 5  # 5-й столбец скрытый — тип строки
     dgv.Columns[0].Name = "№ п/п"
     dgv.Columns[1].Name = "Id элемента"
     dgv.Columns[2].Name = "Номер"
     dgv.Columns[3].Name = "Имя помещения"
+    dgv.Columns[4].Name = "_tag"
+    dgv.Columns[4].Visible = False
 
     dgv.Columns[0].FillWeight = 10
     dgv.Columns[1].FillWeight = 15
     dgv.Columns[2].FillWeight = 15
     dgv.Columns[3].FillWeight = 60
 
-    # Стиль для столбца Id — синий, подчёркнутый, курсор «рука»
+    # Стиль-ссылка для Id
     link_style = DataGridViewCellStyle()
     link_style.ForeColor = Color.Blue
-    link_style.Font = DrawFont(
-        "Arial", 9, FontStyle.Underline
-    )
+    link_style.Font = DrawFont("Arial", 9, FontStyle.Underline)
     dgv.Columns[1].DefaultCellStyle = link_style
 
-    from System import Array, String
-    for i, (eid, num, name) in enumerate(report, 1):
-        row = Array[String]([str(i), str(eid), str(num), str(name)])
-        dgv.Rows.Add(row)
+    # Стиль для строк-деталей (мокрых помещений)
+    detail_style_back = Color.FromArgb(240, 248, 255)  # светло-голубой
+    detail_style_fore = Color.FromArgb(80, 80, 80)     # серый текст
 
-    # Обработчик клика по ячейке Id — выделение и показ элемента
+    # Заполняем строки
+    for i, (eid, num, name, wet_list) in enumerate(report, 1):
+        # Основная строка — с маркером раскрытия
+        expand_marker = "[+] " if wet_list else ""
+        row_data = Array[String]([
+            str(i), str(eid), str(num),
+            "{}{}".format(expand_marker, name), "main"
+        ])
+        row_idx = dgv.Rows.Add(row_data)
+        main_rows.add(row_idx)
+
+        # Подстроки для каждого пересекающегося мокрого помещения
+        sub_indices = []
+        for w_eid, w_num, w_name in wet_list:
+            sub_data = Array[String]([
+                "", str(w_eid), str(w_num),
+                "    \u2191 {}".format(w_name), "detail"
+            ])
+            sub_idx = dgv.Rows.Add(sub_data)
+            dgv.Rows[sub_idx].Visible = False
+            sub_indices.append(sub_idx)
+
+        detail_map[row_idx] = sub_indices
+
+    # Раскрашиваем подстроки после добавления
+    for sub_list in detail_map.values():
+        for si in sub_list:
+            row_obj = dgv.Rows[si]
+            for ci in range(dgv.ColumnCount):
+                row_obj.Cells[ci].Style.BackColor = detail_style_back
+                row_obj.Cells[ci].Style.ForeColor = detail_style_fore
+
+    # Обработчик клика
     def on_cell_click(sender, e):
         if e.RowIndex < 0:
             return
-        # Столбец 1 = Id элемента
-        if e.ColumnIndex != 1:
+
+        # Клик по столбцу Id — выделение/показ элемента
+        if e.ColumnIndex == 1:
+            cell_value = sender.Rows[e.RowIndex].Cells[1].Value
+            if cell_value is None or cell_value.strip() == "":
+                return
+            try:
+                eid_int = int(cell_value)
+                elem_id = ElementId(eid_int)
+                ids = NetList[ElementId]()
+                ids.Add(elem_id)
+                uidoc.Selection.SetElementIds(ids)
+                uidoc.ShowElements(elem_id)
+            except:
+                pass
             return
-        cell_value = sender.Rows[e.RowIndex].Cells[1].Value
-        if cell_value is None:
-            return
-        try:
-            eid_int = int(cell_value)
-            elem_id = ElementId(eid_int)
-            ids = NetList[ElementId]()
-            ids.Add(elem_id)
-            uidoc.Selection.SetElementIds(ids)
-            uidoc.ShowElements(elem_id)
-        except:
-            pass
+
+        # Клик по любому другому столбцу основной строки — раскрытие/скрытие
+        if e.RowIndex in detail_map:
+            subs = detail_map[e.RowIndex]
+            if not subs:
+                return
+            # Проверяем текущее состояние
+            currently_visible = dgv.Rows[subs[0]].Visible
+            for si in subs:
+                dgv.Rows[si].Visible = not currently_visible
+            # Обновляем маркер
+            name_cell = sender.Rows[e.RowIndex].Cells[3]
+            old_text = name_cell.Value or ""
+            if currently_visible:
+                name_cell.Value = old_text.replace("[-] ", "[+] ", 1)
+            else:
+                name_cell.Value = old_text.replace("[+] ", "[-] ", 1)
 
     dgv.CellClick += on_cell_click
 
     # Курсор «рука» при наведении на столбец Id
     def on_cell_mouse_enter(sender, e):
         if e.ColumnIndex == 1 and e.RowIndex >= 0:
-            sender.Cursor = Cursors.Hand
-        else:
-            sender.Cursor = Cursors.Default
+            cell_val = sender.Rows[e.RowIndex].Cells[1].Value
+            if cell_val and cell_val.strip():
+                sender.Cursor = Cursors.Hand
+                return
+        sender.Cursor = Cursors.Default
 
     dgv.CellMouseEnter += on_cell_mouse_enter
 
@@ -313,7 +374,6 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
     frm.TopMost = True
     frm.Show()
 
-    # Не блокируем поток — отдаём управление Revit, окно остаётся поверх
     from System.Windows.Forms import Application
     Application.DoEvents()
 
@@ -452,18 +512,21 @@ def main():
             wet_rooms_by_level[lid_int] = wet
 
     # Кэшируем контуры мокрых помещений (проекция на Z=0)
+    # Сохраняем пары (loop, wet_room) для дальнейшей идентификации
     wet_loops_cache = {}
     for lid_int, wet_rooms in wet_rooms_by_level.items():
-        loops = []
+        entries = []
         for wr in wet_rooms:
             loop = get_room_boundary_loop(wr, z=0.0)
             if loop is not None:
-                loops.append(loop)
-        if loops:
-            wet_loops_cache[lid_int] = loops
+                entries.append((loop, wr))
+        if entries:
+            wet_loops_cache[lid_int] = entries
 
     # Проверяем каждое помещение на пересечение с мокрыми зонами сверху
     # (мокрые помещения исключаются из отчёта)
+    # report: список кортежей (room_id, room_num, room_name, wet_list)
+    #   wet_list: [(wet_id, wet_num, wet_name), ...]
     report = []
     for room in all_rooms:
         # Само мокрое — пропускаем
@@ -484,22 +547,29 @@ def main():
         # Есть ли мокрые помещения на верхнем уровне?
         if upper_level_int not in wet_loops_cache:
             continue
-        wet_loops = wet_loops_cache[upper_level_int]
+        wet_entries = wet_loops_cache[upper_level_int]
 
         # Получаем контур текущего помещения
         room_loop = get_room_boundary_loop(room, z=0.0)
         if room_loop is None:
             continue
 
-        # Проверяем пересечение с каждым мокрым контуром сверху
-        for wl in wet_loops:
+        # Собираем все пересекающиеся мокрые помещения
+        matching_wet = []
+        for wl, wr in wet_entries:
             if loops_intersect(room_loop, wl):
-                name_p = room.get_Parameter(BuiltInParameter.ROOM_NAME)
-                num_p = room.get_Parameter(BuiltInParameter.ROOM_NUMBER)
-                r_name = name_p.AsString() if name_p else ""
-                r_number = num_p.AsString() if num_p else ""
-                report.append((room.Id.IntegerValue, r_number, r_name))
-                break  # Достаточно одного пересечения
+                wp_name = wr.get_Parameter(BuiltInParameter.ROOM_NAME)
+                wp_num = wr.get_Parameter(BuiltInParameter.ROOM_NUMBER)
+                w_name = wp_name.AsString() if wp_name else ""
+                w_number = wp_num.AsString() if wp_num else ""
+                matching_wet.append((wr.Id.IntegerValue, w_number, w_name))
+
+        if matching_wet:
+            name_p = room.get_Parameter(BuiltInParameter.ROOM_NAME)
+            num_p = room.get_Parameter(BuiltInParameter.ROOM_NUMBER)
+            r_name = name_p.AsString() if name_p else ""
+            r_number = num_p.AsString() if num_p else ""
+            report.append((room.Id.IntegerValue, r_number, r_name, matching_wet))
 
     # Вывод отчёта
     if not report:
