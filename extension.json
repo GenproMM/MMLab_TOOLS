@@ -1,0 +1,13 @@
+{
+    "type": "extension",
+    "name": "MM LAB",
+    "description": "MM LAB Tools for Revit",
+    "author": "MM LAB",
+    "author_profile": "",
+    "url": "",
+    "website": "",
+    "image": "",
+    "dependencies": [],
+    "templates": [],
+    "rockets": []
+}

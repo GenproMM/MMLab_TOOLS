@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:pyrevitlabs.notion.site)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.learnrevitapi.com)",
+      "WebFetch(domain:discourse.pyrevitlabs.io)"
+    ]
+  }
+}
