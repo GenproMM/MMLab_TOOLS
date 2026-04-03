@@ -215,7 +215,6 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
     from System.Windows.Forms import (
         DataGridViewClipboardCopyMode,
         DataGridViewCellStyle,
-        FormWindowState,
         Cursors,
     )
     from System.Drawing import Color, FontStyle
@@ -294,8 +293,6 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
             ids.Add(elem_id)
             uidoc.Selection.SetElementIds(ids)
             uidoc.ShowElements(elem_id)
-            # Сворачиваем окно, чтобы пользователь видел модель
-            frm.WindowState = FormWindowState.Minimized
         except:
             pass
 
@@ -313,8 +310,12 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
     frm.Controls.Add(dgv)
     dgv.BringToFront()
 
-    frm.ShowDialog()
-    frm.Dispose()
+    frm.TopMost = True
+    frm.Show()
+
+    # Не блокируем поток — отдаём управление Revit, окно остаётся поверх
+    from System.Windows.Forms import Application
+    Application.DoEvents()
 
 
 class WetZonesDialog(Form):
