@@ -205,8 +205,21 @@ def is_wet_room(room, patterns):
 
 # === UI ===
 
-def show_report(report, phase_name, filter_text, total_checked):
-    """Показать результат проверки в WinForms-окне с таблицей."""
+def show_report(report, phase_name, filter_text, total_checked, uidoc):
+    """Показать результат проверки в WinForms-окне с таблицей.
+
+    Клик по ячейке Id элемента — выделяет помещение в модели
+    и открывает его на подходящем виде.
+    """
+    from Autodesk.Revit.DB import ElementId
+    from System.Windows.Forms import (
+        DataGridViewClipboardCopyMode,
+        DataGridViewCellStyle,
+        FormWindowState,
+        Cursors,
+    )
+    from System.Drawing import Color, FontStyle
+
     frm = Form()
     frm.Text = "Отчёт: помещения под мокрыми зонами"
     frm.Size = Size(700, 500)
@@ -236,6 +249,9 @@ def show_report(report, phase_name, filter_text, total_checked):
     dgv.ColumnHeadersHeightSizeMode = (
         DataGridViewColumnHeadersHeightSizeMode.AutoSize
     )
+    dgv.ClipboardCopyMode = (
+        DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText
+    )
 
     dgv.ColumnCount = 4
     dgv.Columns[0].Name = "№ п/п"
@@ -248,13 +264,53 @@ def show_report(report, phase_name, filter_text, total_checked):
     dgv.Columns[2].FillWeight = 15
     dgv.Columns[3].FillWeight = 60
 
+    # Стиль для столбца Id — синий, подчёркнутый, курсор «рука»
+    link_style = DataGridViewCellStyle()
+    link_style.ForeColor = Color.Blue
+    link_style.Font = DrawFont(
+        "Arial", 9, FontStyle.Underline
+    )
+    dgv.Columns[1].DefaultCellStyle = link_style
+
     from System import Array, String
     for i, (eid, num, name) in enumerate(report, 1):
         row = Array[String]([str(i), str(eid), str(num), str(name)])
         dgv.Rows.Add(row)
 
+    # Обработчик клика по ячейке Id — выделение и показ элемента
+    def on_cell_click(sender, e):
+        if e.RowIndex < 0:
+            return
+        # Столбец 1 = Id элемента
+        if e.ColumnIndex != 1:
+            return
+        cell_value = sender.Rows[e.RowIndex].Cells[1].Value
+        if cell_value is None:
+            return
+        try:
+            eid_int = int(cell_value)
+            elem_id = ElementId(eid_int)
+            ids = NetList[ElementId]()
+            ids.Add(elem_id)
+            uidoc.Selection.SetElementIds(ids)
+            uidoc.ShowElements(elem_id)
+            # Сворачиваем окно, чтобы пользователь видел модель
+            frm.WindowState = FormWindowState.Minimized
+        except:
+            pass
+
+    dgv.CellClick += on_cell_click
+
+    # Курсор «рука» при наведении на столбец Id
+    def on_cell_mouse_enter(sender, e):
+        if e.ColumnIndex == 1 and e.RowIndex >= 0:
+            sender.Cursor = Cursors.Hand
+        else:
+            sender.Cursor = Cursors.Default
+
+    dgv.CellMouseEnter += on_cell_mouse_enter
+
     frm.Controls.Add(dgv)
-    # Label добавлен первым, поэтому перемещаем таблицу ниже заголовка
     dgv.BringToFront()
 
     frm.ShowDialog()
@@ -456,7 +512,8 @@ def main():
         )
         return
 
-    show_report(report, phase.Name, raw_patterns, len(all_rooms))
+    uidoc = __revit__.ActiveUIDocument
+    show_report(report, phase.Name, raw_patterns, len(all_rooms), uidoc)
 
 
 if __name__ == "__main__":
