@@ -262,18 +262,20 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
         DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText
     )
 
-    dgv.ColumnCount = 5  # 5-й столбец скрытый — тип строки
+    dgv.ColumnCount = 6  # 6-й столбец скрытый — тип строки
     dgv.Columns[0].Name = "№ п/п"
     dgv.Columns[1].Name = "Id элемента"
     dgv.Columns[2].Name = "Номер"
     dgv.Columns[3].Name = "Имя помещения"
-    dgv.Columns[4].Name = "_tag"
-    dgv.Columns[4].Visible = False
+    dgv.Columns[4].Name = "Уровень"
+    dgv.Columns[5].Name = "_tag"
+    dgv.Columns[5].Visible = False
 
-    dgv.Columns[0].FillWeight = 10
-    dgv.Columns[1].FillWeight = 15
-    dgv.Columns[2].FillWeight = 15
-    dgv.Columns[3].FillWeight = 60
+    dgv.Columns[0].FillWeight = 8
+    dgv.Columns[1].FillWeight = 12
+    dgv.Columns[2].FillWeight = 12
+    dgv.Columns[3].FillWeight = 45
+    dgv.Columns[4].FillWeight = 23
 
     # Стиль-ссылка для Id
     link_style = DataGridViewCellStyle()
@@ -286,22 +288,22 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
     detail_style_fore = Color.FromArgb(80, 80, 80)     # серый текст
 
     # Заполняем строки
-    for i, (eid, num, name, wet_list) in enumerate(report, 1):
+    for i, (eid, num, name, lvl_name, wet_list) in enumerate(report, 1):
         # Основная строка — с маркером раскрытия
         expand_marker = "[+] " if wet_list else ""
         row_data = Array[String]([
             str(i), str(eid), str(num),
-            "{}{}".format(expand_marker, name), "main"
+            "{}{}".format(expand_marker, name), str(lvl_name), "main"
         ])
         row_idx = dgv.Rows.Add(row_data)
         main_rows.add(row_idx)
 
         # Подстроки для каждого пересекающегося мокрого помещения
         sub_indices = []
-        for w_eid, w_num, w_name in wet_list:
+        for w_eid, w_num, w_name, w_lvl in wet_list:
             sub_data = Array[String]([
                 "", str(w_eid), str(w_num),
-                "    \u2191 {}".format(w_name), "detail"
+                "    \u2191 {}".format(w_name), str(w_lvl), "detail"
             ])
             sub_idx = dgv.Rows.Add(sub_data)
             dgv.Rows[sub_idx].Visible = False
@@ -310,10 +312,11 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
         detail_map[row_idx] = sub_indices
 
     # Раскрашиваем подстроки после добавления
+    visible_col_count = dgv.ColumnCount
     for sub_list in detail_map.values():
         for si in sub_list:
             row_obj = dgv.Rows[si]
-            for ci in range(dgv.ColumnCount):
+            for ci in range(visible_col_count):
                 row_obj.Cells[ci].Style.BackColor = detail_style_back
                 row_obj.Cells[ci].Style.ForeColor = detail_style_fore
 
@@ -367,6 +370,58 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
         sender.Cursor = Cursors.Default
 
     dgv.CellMouseEnter += on_cell_mouse_enter
+
+    # Панель с кнопкой «Сохранить отчёт»
+    from System.Windows.Forms import Panel, SaveFileDialog
+    pnl = Panel()
+    pnl.Dock = DockStyle.Bottom
+    pnl.Height = 40
+    frm.Controls.Add(pnl)
+
+    btn_save = Button()
+    btn_save.Text = "Сохранить отчёт"
+    btn_save.Size = Size(130, 28)
+    btn_save.Location = Point(10, 6)
+    pnl.Controls.Add(btn_save)
+
+    def on_save_click(sender, e):
+        import csv
+        save_dlg = SaveFileDialog()
+        save_dlg.Title = "Сохранить отчёт"
+        save_dlg.Filter = "CSV (*.csv)|*.csv"
+        save_dlg.FileName = "wet_zones_report.csv"
+        save_dlg.OverwritePrompt = True
+        if save_dlg.ShowDialog() != DialogResult.OK:
+            return
+        path = save_dlg.FileName
+        try:
+            with open(path, "w", newline="", encoding="utf-8-sig") as f:
+                writer = csv.writer(f, delimiter=";")
+                # Заголовок
+                writer.writerow([
+                    "\u2116 \u043f/\u043f", "Id \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u0430", "\u041d\u043e\u043c\u0435\u0440",
+                    "\u0418\u043c\u044f \u043f\u043e\u043c\u0435\u0449\u0435\u043d\u0438\u044f", "\u0423\u0440\u043e\u0432\u0435\u043d\u044c", "\u0422\u0438\u043f"
+                ])
+                for row_i in range(dgv.Rows.Count):
+                    tag = dgv.Rows[row_i].Cells[5].Value or ""
+                    row_type = "\u041c\u043e\u043a\u0440\u043e\u0435 \u0441\u0432\u0435\u0440\u0445\u0443" if tag == "detail" else "\u041f\u043e\u043c\u0435\u0449\u0435\u043d\u0438\u0435"
+                    name_val = (dgv.Rows[row_i].Cells[3].Value or "")
+                    # \u0423\u0431\u0438\u0440\u0430\u0435\u043c \u043c\u0430\u0440\u043a\u0435\u0440\u044b [+]/[-]
+                    name_val = name_val.replace("[+] ", "").replace("[-] ", "")
+                    writer.writerow([
+                        dgv.Rows[row_i].Cells[0].Value or "",
+                        dgv.Rows[row_i].Cells[1].Value or "",
+                        dgv.Rows[row_i].Cells[2].Value or "",
+                        name_val.strip(),
+                        dgv.Rows[row_i].Cells[4].Value or "",
+                        row_type,
+                    ])
+            alert("\u041e\u0442\u0447\u0451\u0442 \u0441\u043e\u0445\u0440\u0430\u043d\u0451\u043d:\n{}".format(path))
+        except:
+            import traceback
+            alert("\u041e\u0448\u0438\u0431\u043a\u0430 \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u0438\u044f:\n\n{}".format(traceback.format_exc()), title="\u041e\u0448\u0438\u0431\u043a\u0430")
+
+    btn_save.Click += on_save_click
 
     frm.Controls.Add(dgv)
     dgv.BringToFront()
@@ -556,20 +611,24 @@ def main():
 
         # Собираем все пересекающиеся мокрые помещения
         matching_wet = []
+        upper_lvl = levels_dict.get(upper_level_int)
+        upper_lvl_name = upper_lvl.Name if upper_lvl else ""
         for wl, wr in wet_entries:
             if loops_intersect(room_loop, wl):
                 wp_name = wr.get_Parameter(BuiltInParameter.ROOM_NAME)
                 wp_num = wr.get_Parameter(BuiltInParameter.ROOM_NUMBER)
                 w_name = wp_name.AsString() if wp_name else ""
                 w_number = wp_num.AsString() if wp_num else ""
-                matching_wet.append((wr.Id.IntegerValue, w_number, w_name))
+                matching_wet.append((wr.Id.IntegerValue, w_number, w_name, upper_lvl_name))
 
         if matching_wet:
             name_p = room.get_Parameter(BuiltInParameter.ROOM_NAME)
             num_p = room.get_Parameter(BuiltInParameter.ROOM_NUMBER)
             r_name = name_p.AsString() if name_p else ""
             r_number = num_p.AsString() if num_p else ""
-            report.append((room.Id.IntegerValue, r_number, r_name, matching_wet))
+            room_lvl = levels_dict.get(room_level_int)
+            room_lvl_name = room_lvl.Name if room_lvl else ""
+            report.append((room.Id.IntegerValue, r_number, r_name, room_lvl_name, matching_wet))
 
     # Вывод отчёта
     if not report:
