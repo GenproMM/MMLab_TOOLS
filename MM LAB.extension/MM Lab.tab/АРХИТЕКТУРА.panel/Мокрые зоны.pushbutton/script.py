@@ -1,4 +1,3 @@
-#! python3
 # -*- coding: utf-8 -*-
 """Проверка мокрых зон
 
@@ -328,17 +327,22 @@ def show_report(report, phase_name, filter_text, total_checked, uidoc):
         # Клик по столбцу Id — выделение/показ элемента
         if e.ColumnIndex == 1:
             cell_value = sender.Rows[e.RowIndex].Cells[1].Value
-            if cell_value is None or cell_value.strip() == "":
+            if cell_value is None or str(cell_value).strip() == "":
                 return
             try:
-                eid_int = int(cell_value)
-                elem_id = ElementId(eid_int)
-                ids = NetList[ElementId]()
-                ids.Add(elem_id)
-                uidoc.Selection.SetElementIds(ids)
+                from Autodesk.Revit.DB import ElementId as ElemId
+                from System.Collections.Generic import List
+                eid_int = int(str(cell_value))
+                elem_id = ElemId(eid_int)
+                id_list = List[ElemId]()
+                id_list.Add(elem_id)
+                frm.TopMost = False
+                uidoc.Selection.SetElementIds(id_list)
                 uidoc.ShowElements(elem_id)
+                uidoc.RefreshActiveView()
             except:
-                pass
+                import traceback
+                traceback.print_exc()
             return
 
         # Клик по любому другому столбцу основной строки — раскрытие/скрытие
