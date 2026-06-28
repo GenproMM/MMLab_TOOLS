@@ -1,0 +1,10 @@
+# GSD release-map — операционные/перегенерируемые артефакты
+RELEASE_MAP/output/
+RELEASE_MAP/status-journal.csv
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE
+.vs/
