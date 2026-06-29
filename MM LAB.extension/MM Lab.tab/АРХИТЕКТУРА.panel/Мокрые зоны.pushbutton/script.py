@@ -1,3 +1,4 @@
+#! python3
 # -*- coding: utf-8 -*-
 """Проверка мокрых зон
 
@@ -29,6 +30,12 @@ import clr
 import sys
 import os
 
+SCRIPT_DIR = os.path.dirname(__file__)
+EXTENSION_ROOT = os.path.normpath(os.path.join(SCRIPT_DIR, "..", "..", "..", ".."))
+LIB_DIR = os.path.join(EXTENSION_ROOT, "lib")
+if os.path.isdir(LIB_DIR) and LIB_DIR not in sys.path:
+    sys.path.insert(0, LIB_DIR)
+
 clr.AddReference("RevitAPI")
 clr.AddReference("RevitAPIUI")
 from Autodesk.Revit.DB import (
@@ -45,7 +52,7 @@ from Autodesk.Revit.DB import (
     BooleanOperationsUtils,
     BooleanOperationsType,
 )
-from Autodesk.Revit.UI import TaskDialog, TaskDialogCommonButtons
+from revit_ui_helpers import alert  # type: ignore
 
 # .NET коллекции для передачи в Revit API
 from System.Collections.Generic import List as NetList
@@ -68,13 +75,6 @@ DEFAULT_WET_PATTERNS = "санузел, ванная, душ, туалет, по
 
 
 # === HELPERS ===
-
-def alert(message, title="Мокрые зоны"):
-    """Показать сообщение через Revit TaskDialog."""
-    td = TaskDialog(title)
-    td.MainContent = message
-    td.CommonButtons = TaskDialogCommonButtons.Ok
-    td.Show()
 
 
 def get_all_phases(doc):

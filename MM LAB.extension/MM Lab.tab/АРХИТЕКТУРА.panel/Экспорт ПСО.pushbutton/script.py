@@ -41,13 +41,6 @@ from System.Windows.Forms import (
 # UI helpers — замена pyrevit.forms для CPython3
 # ==============================================================================
 
-def alert(message, title="Экспорт ПСО"):
-    """Показывает диалог через Revit TaskDialog."""
-    td = UI.TaskDialog(title)
-    td.MainContent = message
-    td.CommonButtons = UI.TaskDialogCommonButtons.Ok
-    td.Show()
-
 
 def save_file(title="Сохранить файл", default_name="", file_filter=""):
     """Диалог сохранения файла через WinForms SaveFileDialog."""
@@ -70,6 +63,8 @@ VENDOR_DIR     = os.path.join(EXTENSION_ROOT, "lib")
 
 if os.path.isdir(VENDOR_DIR) and VENDOR_DIR not in sys.path:
     sys.path.insert(0, VENDOR_DIR)
+
+from revit_ui_helpers import alert
 
 try:
     import openpyxl
