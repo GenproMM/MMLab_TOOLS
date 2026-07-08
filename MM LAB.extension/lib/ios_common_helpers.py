@@ -142,19 +142,43 @@ def get_parameter_by_names(element, *names):
     return None
 
 
+# Кеш: BuiltInParameter (int) → английское имя параметра из Definition.Name
+_BIP_NAME_CACHE = {}
+
+
+def _bip_to_lookup_name(document, built_in_parameter):
+    """Конвертирует BuiltInParameter в стабильное имя для LookupParameter.
+
+    Использует document.GetElement(ElementId(bip)) → ParameterElement →
+    Definition.Name. Имя кешируется — каждый BuiltInParameter резолвится
+    один раз за сессию.
+
+    LookupParameter(string) имеет единственную перегрузку — нет проблем
+    с неоднозначностью на pythonnet (Revit 2024+).
+    """
+    bip_int = int(built_in_parameter)
+    if bip_int not in _BIP_NAME_CACHE:
+        name = None
+        param_element = document.GetElement(ElementId(bip_int))
+        if param_element is not None:
+            try:
+                name = param_element.GetDefinition().Name
+            except Exception:
+                name = None
+        _BIP_NAME_CACHE[bip_int] = name
+    return _BIP_NAME_CACHE[bip_int]
+
+
 def get_parameter(element, built_in_parameter, *names):
-    # На Revit 2024+ с pythonnet BuiltInParameter передаётся как int,
-    # и резолвер перегрузок get_Parameter(Guid|BuiltInParameter|Definition|string)
-    # не может выбрать правильную — падает с TypeError.
-    # Обходим через try/except с fallback на LookupParameter по именам.
-    try:
-        parameter = element.get_Parameter(built_in_parameter)
-    except TypeError:
-        parameter = None
+    # Получаем параметр через LookupParameter по имени из ParameterElement.
+    # Никаких перегрузок — LookupParameter имеет ровно одну сигнатуру (string).
+    name = _bip_to_lookup_name(element.Document, built_in_parameter)
+    if name:
+        parameter = element.LookupParameter(name)
+        if parameter is not None:
+            return parameter
 
-    if parameter is not None:
-        return parameter
-
+    # Fallback: поиск по локализованным именам из аргументов
     return get_parameter_by_names(element, *names)
 
 
@@ -392,12 +416,11 @@ def set_additional_flow_value(document, target_value):
     updated_count = 0
 
     for element in collect_additional_flow_elements(document):
-        # Основной путь: получение параметра по BuiltInParameter (стабилен
-        # меж версиями и локалями). При TypeError на pythonnet Revit 2024+
-        # — fallback на LookupParameter по локализованным именам.
-        try:
-            parameter = element.get_Parameter(BuiltInParameter.RBS_ADDITIONAL_FLOW)
-        except TypeError:
+        # LookupParameter по имени из ParameterElement — без перегрузок get_Parameter.
+        name = _bip_to_lookup_name(document, BuiltInParameter.RBS_ADDITIONAL_FLOW)
+        if name:
+            parameter = element.LookupParameter(name)
+        else:
             parameter = get_parameter_by_names(element, "Additional Flow", u"Доп. расход")
 
         if not is_writable(parameter) or parameter.StorageType != StorageType.Double:
