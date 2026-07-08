@@ -143,7 +143,15 @@ def get_parameter_by_names(element, *names):
 
 
 def get_parameter(element, built_in_parameter, *names):
-    parameter = element.get_Parameter(built_in_parameter)
+    # На Revit 2024+ с pythonnet BuiltInParameter передаётся как int,
+    # и резолвер перегрузок get_Parameter(Guid|BuiltInParameter|Definition|string)
+    # не может выбрать правильную — падает с TypeError.
+    # Обходим через try/except с fallback на LookupParameter по именам.
+    try:
+        parameter = element.get_Parameter(built_in_parameter)
+    except TypeError:
+        parameter = None
+
     if parameter is not None:
         return parameter
 
@@ -384,7 +392,16 @@ def set_additional_flow_value(document, target_value):
     updated_count = 0
 
     for element in collect_additional_flow_elements(document):
-        parameter = element.get_Parameter(BuiltInParameter.RBS_ADDITIONAL_FLOW)
+        # На Revit 2024+ с pythonnet get_Parameter(BuiltInParameter) падает с
+        # TypeError из-за неоднозначности перегрузок. Используем LookupParameter
+        # (одна перегрузка string — резолвится всегда) с fallback на get_Parameter.
+        parameter = get_parameter_by_names(element, "Additional Flow", u"Доп. расход")
+        if parameter is None:
+            try:
+                parameter = element.get_Parameter(BuiltInParameter.RBS_ADDITIONAL_FLOW)
+            except TypeError:
+                continue
+
         if not is_writable(parameter) or parameter.StorageType != StorageType.Double:
             continue
 
