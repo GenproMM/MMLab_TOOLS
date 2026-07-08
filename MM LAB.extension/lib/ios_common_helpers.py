@@ -392,15 +392,13 @@ def set_additional_flow_value(document, target_value):
     updated_count = 0
 
     for element in collect_additional_flow_elements(document):
-        # На Revit 2024+ с pythonnet get_Parameter(BuiltInParameter) падает с
-        # TypeError из-за неоднозначности перегрузок. Используем LookupParameter
-        # (одна перегрузка string — резолвится всегда) с fallback на get_Parameter.
-        parameter = get_parameter_by_names(element, "Additional Flow", u"Доп. расход")
-        if parameter is None:
-            try:
-                parameter = element.get_Parameter(BuiltInParameter.RBS_ADDITIONAL_FLOW)
-            except TypeError:
-                continue
+        # Основной путь: получение параметра по BuiltInParameter (стабилен
+        # меж версиями и локалями). При TypeError на pythonnet Revit 2024+
+        # — fallback на LookupParameter по локализованным именам.
+        try:
+            parameter = element.get_Parameter(BuiltInParameter.RBS_ADDITIONAL_FLOW)
+        except TypeError:
+            parameter = get_parameter_by_names(element, "Additional Flow", u"Доп. расход")
 
         if not is_writable(parameter) or parameter.StorageType != StorageType.Double:
             continue
