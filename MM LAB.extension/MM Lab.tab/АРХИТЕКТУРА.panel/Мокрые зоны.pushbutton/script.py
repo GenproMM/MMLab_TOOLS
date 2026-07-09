@@ -77,6 +77,25 @@ DEFAULT_WET_PATTERNS = "санузел, ванная, душ, туалет, по
 # === HELPERS ===
 
 
+def _get_param(element, bip):
+    """Прочитать параметр по BuiltInParameter, устойчиво к резолвингу
+    перегрузок get_Parameter в pythonnet (CPython3 pyRevit, Revit 2024+).
+
+    На части конфигураций pythonnet значение enum BuiltInParameter
+    воспринимается как обычный Python int, и вызов
+    element.get_Parameter(BuiltInParameter.X) падает с
+    'TypeError: No method matches given arguments for get_Parameter: (int)'.
+    Явно выбираем перегрузку get_Parameter(BuiltInParameter) — это снимает
+    неоднозначность и включает корректное приведение аргумента к enum.
+    Fallback на прямой вызов сохраняет поведение на средах, где всё работает
+    (Revit 2020/2022, IronPython) и где __overloads__ недоступен.
+    """
+    try:
+        return element.get_Parameter.__overloads__[BuiltInParameter](bip)
+    except (TypeError, AttributeError, KeyError):
+        return element.get_Parameter(bip)
+
+
 def get_all_phases(doc):
     """Получить все стадии проекта в виде списка (имя, Phase)."""
     return [(p.Name, p) for p in doc.Phases]
@@ -100,7 +119,7 @@ def get_rooms_in_phase(doc, phase):
                 continue
         except:
             continue
-        phase_param = room.get_Parameter(BuiltInParameter.ROOM_PHASE)
+        phase_param = _get_param(room, BuiltInParameter.ROOM_PHASE)
         if phase_param is None:
             continue
         if phase_param.AsElementId().IntegerValue == phase_id_int:
@@ -190,7 +209,7 @@ def loops_intersect(loop1, loop2):
 
 def is_wet_room(room, patterns):
     """Проверить, является ли помещение мокрым (имя содержит одну из подстрок)."""
-    name_param = room.get_Parameter(BuiltInParameter.ROOM_NAME)
+    name_param = _get_param(room, BuiltInParameter.ROOM_NAME)
     if name_param is None:
         return False
     room_name = (name_param.AsString() or "").strip().lower()
@@ -619,15 +638,15 @@ def main():
         upper_lvl_name = upper_lvl.Name if upper_lvl else ""
         for wl, wr in wet_entries:
             if loops_intersect(room_loop, wl):
-                wp_name = wr.get_Parameter(BuiltInParameter.ROOM_NAME)
-                wp_num = wr.get_Parameter(BuiltInParameter.ROOM_NUMBER)
+                wp_name = _get_param(wr, BuiltInParameter.ROOM_NAME)
+                wp_num = _get_param(wr, BuiltInParameter.ROOM_NUMBER)
                 w_name = wp_name.AsString() if wp_name else ""
                 w_number = wp_num.AsString() if wp_num else ""
                 matching_wet.append((wr.Id.IntegerValue, w_number, w_name, upper_lvl_name))
 
         if matching_wet:
-            name_p = room.get_Parameter(BuiltInParameter.ROOM_NAME)
-            num_p = room.get_Parameter(BuiltInParameter.ROOM_NUMBER)
+            name_p = _get_param(room, BuiltInParameter.ROOM_NAME)
+            num_p = _get_param(room, BuiltInParameter.ROOM_NUMBER)
             r_name = name_p.AsString() if name_p else ""
             r_number = num_p.AsString() if num_p else ""
             room_lvl = levels_dict.get(room_level_int)
