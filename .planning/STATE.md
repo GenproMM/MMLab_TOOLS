@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 Phase: 1 of 1 (Дедупликация общих helper-функций ИОС)
 Plan: 3 of 3 in current phase
 Status: Phase completed
-Last activity: 2026-06-09 — Закрыта verification по phase 01-helper
+Last activity: 2026-07-09 - Completed quick task 260709-jko: ИОС panel button errors (get_Parameter/BuiltInParameter)
 
 Progress: [██████████] 100%
 
@@ -36,6 +36,12 @@ Progress: [██████████] 100%
 ### Blockers/Concerns
 
 - Functional UAT в Revit не выполняется в headless-среде и вынесен в follow-up.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260709-jko | ИОС panel: AttributeError на RBS_DUCT_LOSS_METHOD_SERVER_PARAM + bool/string outcome mismatch в ensure_loss_method_undefined | 2026-07-09 | (pending) | [260709-jko-get-parameter-typeerror-builtinparameter](./quick/260709-jko-get-parameter-typeerror-builtinparameter/) |
 
 ### Roadmap Evolution
 

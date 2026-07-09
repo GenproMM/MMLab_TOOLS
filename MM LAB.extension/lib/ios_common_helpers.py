@@ -269,11 +269,13 @@ def try_set_parameter_to_undefined(parameter):
 
 
 def get_loss_method_parameters(element):
+    # RBS_DUCT_FITTING_LOSS_METHOD_SERVER_PARAM — единственный валидный BuiltInParameter
+    # для метода расчёта потерь: покрывает и duct fitting, и duct accessory (Autodesk API).
+    # RBS_DUCT_LOSS_METHOD_SERVER_PARAM и RBS_DUCT_TERMINAL_LOSS_METHOD_SERVER_PARAM
+    # не существуют в BuiltInParameter — их использование вызывало AttributeError.
     parameters = []
     for built_in_parameter, names in [
-        (BuiltInParameter.RBS_DUCT_LOSS_METHOD_SERVER_PARAM, [u"Метод расчета потерь", u"Loss Method"]),
         (BuiltInParameter.RBS_DUCT_FITTING_LOSS_METHOD_SERVER_PARAM, [u"Метод расчета потерь", u"Loss Method"]),
-        (BuiltInParameter.RBS_DUCT_TERMINAL_LOSS_METHOD_SERVER_PARAM, [u"Метод расчета потерь", u"Loss Method"]),
     ]:
         parameter = get_parameter(element, built_in_parameter, *names)
         if parameter is not None:
@@ -310,13 +312,20 @@ def get_duct_loss_method_not_defined_server_id():
 
 
 def ensure_loss_method_undefined(family_instance, not_defined_server_id):
-    changed = False
+    parameters = get_loss_method_parameters(family_instance)
+    if not parameters:
+        return "skipped"
 
-    for parameter in get_loss_method_parameters(family_instance):
-        if not is_writable(parameter):
+    changed = False
+    all_already_undefined = True
+
+    for parameter in parameters:
+        if is_parameter_undefined(parameter):
             continue
 
-        if is_parameter_undefined(parameter):
+        all_already_undefined = False
+
+        if not is_writable(parameter):
             continue
 
         set_success = False
@@ -334,7 +343,11 @@ def ensure_loss_method_undefined(family_instance, not_defined_server_id):
         if try_set_parameter_to_undefined(parameter) and is_parameter_undefined(parameter):
             changed = True
 
-    return changed
+    if changed:
+        return "updated"
+    if all_already_undefined:
+        return "already"
+    return "skipped"
 
 
 def get_default_supply_flag_decision(classification):
