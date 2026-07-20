@@ -139,12 +139,15 @@ def get_room_boundary_loop(room, z=0.0):
     except:
         return None
 
-    if boundary is None or boundary.Count == 0:
+    # len() работает и на .NET IList, и на Python list — pyRevit под разными
+    # версиями pythonnet маршалит IList<IList<BoundarySegment>> по-разному
+    # (у части пользователей это Python list без .Count). См. debug-заметку.
+    if boundary is None or len(boundary) == 0:
         return None
 
     # Берём первый (внешний) контур
     segments = boundary[0]
-    if segments is None or segments.Count == 0:
+    if segments is None or len(segments) == 0:
         return None
 
     curves = []
