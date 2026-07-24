@@ -29,7 +29,7 @@
 
 **Depends on:** Phase 2
 
-**Plans:** 2/7 plans executed
+**Plans:** 3/7 plans executed
 
 ### Объём работ
 
@@ -62,7 +62,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 03-03-PLAN.md — Чекер: AST-правила MM008–MM012 (TDD)
+- [x] 03-03-PLAN.md — Чекер: AST-правила MM008–MM012 (TDD)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
