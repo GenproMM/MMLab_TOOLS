@@ -2,19 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 03
-current_phase_name: convention
 status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-07-24T11:42:16.801Z"
+stopped_at: Completed 03-04-PLAN.md
+last_updated: "2026-07-24T11:56:43.632Z"
 last_activity: 2026-07-24
-last_activity_desc: Phase 03 execution started
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 7
-  completed_plans: 3
-  percent: 0
+  completed_plans: 4
+  percent: 57
 ---
 
 # Project State
@@ -29,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 ## Current Position
 
 Phase: 03 (convention) — EXECUTING
-Plan: 4 of 7
+Plan: 5 of 7
 Status: Ready to execute
-Last activity: 2026-07-24 — Phase 03 execution started
+Last activity: 2026-07-24
 
 Progress: [██████░░░░] 67%
 
@@ -53,6 +50,8 @@ Progress: [██████░░░░] 67%
 - [Phase 03-convention]: revit_compat: детекция версии каскадом (аргумент -> builtins.__revit__ -> pyrevit.HOST_APP через .version); при неопределённой версии units-ветка 2022+, гейт версии обязателен до convert_*
 - [Phase 03-convention]: Белый список импортов MM008 строится динамически из стемов MM LAB.extension/lib/*.py без чтения содержимого (T-03-08); root=None — сырой режим без first-party
 - [Phase 03-convention]: MM014: единственная чистая форма lib-бутстрапа — sys.path.insert(0, _LIB_DIR); триггеры — имя EXTENSION_ROOT, 4+ '..' в os.path.join, любой иной sys.path-вызов (D-15)
+- [Phase 03-convention]: Baseline конвенции генерируется только фактическим аудитом (--write-baseline): 21 юнит, 202 нарушения заморожены; записи снимаются при адаптации кнопки (/mm-adopt-script)
+- [Phase 03-convention]: Verify-цепочки: py_compile создаёт __pycache__ в папке кнопки и роняет следующий strict-прогон (MM013) — после py_compile чистить __pycache__ (в .gitignore уже покрыт)
 
 ### Pending Todos
 
@@ -70,6 +69,7 @@ Progress: [██████░░░░] 67%
 | Phase 03-convention P01 | 17 min | 2 tasks | 10 files |
 | Phase 03-convention P02 | 10 min | 2 tasks | 2 files |
 | Phase 03-convention P03 | 12 min | 2 tasks | 3 files |
+| Phase 03-convention P04 | 10 min | 2 tasks | 5 files |
 
 ### Roadmap Evolution
 
@@ -79,6 +79,6 @@ Progress: [██████░░░░] 67%
 
 ## Session Continuity
 
-Last session: 2026-07-24T11:40:52.612Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-07-24T11:54:54.760Z
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
