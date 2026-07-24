@@ -42,6 +42,7 @@
   #! python3
   # -*- coding: utf-8 -*-
   ```
+
 - Отсутствие зависимостей от сторонних импортов, библиотек и пакетов.
 - Наличие `README` у скрипта.
 - (список открыт — дополнить при планировании)
@@ -54,11 +55,24 @@
 - Создание новой задачи GSD при адаптации.
 
 Plans:
+**Wave 1**
 
 - [ ] 03-01-PLAN.md — Чекер конвенции: CLI-каркас и структурные правила MM000–MM007, MM013 (TDD)
 - [ ] 03-02-PLAN.md — revit_compat.py: единый compat-модуль Revit 2020/2022/2024 + контрактный тест
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 03-03-PLAN.md — Чекер: AST-правила MM008–MM012 (TDD)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 03-04-PLAN.md — Шаблон кнопки templates/ + baseline legacy-кнопок + чистка tab bundle.yaml
 - [ ] 03-05-PLAN.md — AGENTS.md (канонический стандарт) + тонкие указатели CLAUDE/GEMINI/Kilo
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 03-06-PLAN.md — Канонические процедуры 7 mm-команд в agents/commands/
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
 - [ ] 03-07-PLAN.md — Адаптеры команд для Claude/Gemini/Kilo + каталожный тест
