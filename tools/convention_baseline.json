@@ -99,18 +99,5 @@
       "MM012"
     ]
   },
-  "pending_adoption": {
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton": [
-      "MM001",
-      "MM002",
-      "MM004",
-      "MM005",
-      "MM006",
-      "MM007",
-      "MM009",
-      "MM010",
-      "MM011",
-      "MM012"
-    ]
-  }
+  "pending_adoption": {}
 }
