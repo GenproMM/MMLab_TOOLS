@@ -63,8 +63,9 @@ quick task GSD → пофайловый коммит. Правила конве�
        с `BuiltInParameter` или `revit_compat.get_shared_parameter(...)` с GUID,
        где применимо (MM010);
      - голые `except:` → `except Exception` (MM011);
-     - изменения модели — только в транзакции: `Start()`/`Commit()` в `try`,
-       `RollBack()` + `raise` в `except`;
+     - изменения модели — только в транзакции: `Start()` ПЕРЕД `try`,
+       `Commit()` в `try`, `RollBack()` + `raise` в `except`
+       (каркас шаблона; правило 10 AGENTS.md);
      - в начале `main()` — `revit_compat.require_supported_version(COMMAND_NAME)` (D-03).
    - `bundle.yaml` — `title` (ru/en_us), `tooltip` (ru/en_us), `author` по формату шаблона.
    - `README.md` — по разделам шаблона (`Описание`, `Логика работы`,

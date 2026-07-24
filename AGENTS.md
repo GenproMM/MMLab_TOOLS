@@ -87,8 +87,11 @@ MMLab_TOOLS/
 9. **Fail-fast по версии Revit** (D-03): `main()` начинается с
    `revit_compat.require_supported_version(COMMAND_NAME)` — на неподдерживаемой версии
    пользователь видит TaskDialog с перечнем поддерживаемых версий, скрипт мягко завершается.
-10. **Транзакции**: `transaction.Start()` и `transaction.Commit()` — в `try`,
-    в `except` — `transaction.RollBack()` и `raise`. Модель меняется только внутри транзакции.
+10. **Транзакции**: `transaction.Start()` — ПЕРЕД `try`; `transaction.Commit()` — в `try`;
+    в `except` — `transaction.RollBack()` и `raise` (каркас шаблона
+    `templates/НоваяКнопка.pushbutton/script.py`). `Start()` внутри `try` запрещён:
+    если сам `Start()` упадёт, `except` вызовет `RollBack()` у незапущенной транзакции
+    и замаскирует исходную ошибку. Модель меняется только внутри транзакции.
 11. **Верхнеуровневая обработка ошибок** [MM011]: вызов `main()` обёрнут в
     `try/except Exception` с показом ошибки через `TaskDialog`. Голый `except:` запрещён —
     всегда указывай класс исключения.
