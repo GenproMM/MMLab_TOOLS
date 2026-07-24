@@ -67,7 +67,7 @@ Plans:
 **Wave 3** *(blocked on Wave 2 completion)*
 
 - [x] 03-04-PLAN.md — Шаблон кнопки templates/ + baseline legacy-кнопок + чистка tab bundle.yaml
-- [ ] 03-05-PLAN.md — AGENTS.md (канонический стандарт) + тонкие указатели CLAUDE/GEMINI/Kilo
+- [x] 03-05-PLAN.md — AGENTS.md (канонический стандарт) + тонкие указатели CLAUDE/GEMINI/Kilo
 
 **Wave 4** *(blocked on Wave 3 completion)*
 

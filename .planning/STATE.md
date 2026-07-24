@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-04-PLAN.md
-last_updated: "2026-07-24T11:56:43.632Z"
+stopped_at: Completed 03-05-PLAN.md
+last_updated: "2026-07-24T12:10:48.818Z"
 last_activity: 2026-07-24
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 7
-  completed_plans: 4
-  percent: 57
+  completed_plans: 5
+  percent: 71
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 ## Current Position
 
 Phase: 03 (convention) — EXECUTING
-Plan: 5 of 7
+Plan: 6 of 7
 Status: Ready to execute
 Last activity: 2026-07-24
 
@@ -52,6 +52,8 @@ Progress: [██████░░░░] 67%
 - [Phase 03-convention]: MM014: единственная чистая форма lib-бутстрапа — sys.path.insert(0, _LIB_DIR); триггеры — имя EXTENSION_ROOT, 4+ '..' в os.path.join, любой иной sys.path-вызов (D-15)
 - [Phase 03-convention]: Baseline конвенции генерируется только фактическим аудитом (--write-baseline): 21 юнит, 202 нарушения заморожены; записи снимаются при адаптации кнопки (/mm-adopt-script)
 - [Phase 03-convention]: Verify-цепочки: py_compile создаёт __pycache__ в папке кнопки и роняет следующий strict-прогон (MM013) — после py_compile чистить __pycache__ (в .gitignore уже покрыт)
+- [Phase 03-convention]: AGENTS.md: канонический бутстрап-блок размещён без отступа списка — дословная копипаста шаблона; запрет легаси-формы MM014 описан без литерального легаси-имени переменной (гейт acceptance)
+- [Phase 03-convention]: Белый список импортов в AGENTS.md сверен с HOST_IMPORT_ROOTS чекера (включая Microsoft), а не с сокращённой формулировкой плана — стандарт совпадает с реализацией до буквы
 
 ### Pending Todos
 
@@ -70,6 +72,7 @@ Progress: [██████░░░░] 67%
 | Phase 03-convention P02 | 10 min | 2 tasks | 2 files |
 | Phase 03-convention P03 | 12 min | 2 tasks | 3 files |
 | Phase 03-convention P04 | 10 min | 2 tasks | 5 files |
+| Phase 03-convention P05 | 9 min | 2 tasks | 4 files |
 
 ### Roadmap Evolution
 
@@ -79,6 +82,6 @@ Progress: [██████░░░░] 67%
 
 ## Session Continuity
 
-Last session: 2026-07-24T11:54:54.760Z
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-07-24T12:10:31.283Z
+Stopped at: Completed 03-05-PLAN.md
 Resume file: None
