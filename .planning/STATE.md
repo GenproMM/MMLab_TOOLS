@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 3
-current_phase_name: Конвенция правил скриптов MM LAB и команда проверки/адаптации сторонних скриптов
-status: Not planned yet
-stopped_at: Phase 3 context gathered
-last_updated: "2026-07-24T09:10:56.575Z"
-last_activity: 2026-07-21
-last_activity_desc: Added Phase 3 to roadmap (конвенция скриптов + Claude-команда приёмки)
+current_phase: 03
+current_phase_name: convention
+status: executing
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-07-24T11:07:37.603Z"
+last_activity: 2026-07-24
+last_activity_desc: Phase 03 execution started
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 7
+  completed_plans: 1
   percent: 0
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** Надежные и предсказуемые pyRevit-скрипты, которые сокращают ручной труд без риска повредить модель.
-**Current focus:** Phase 3 - Конвенция правил скриптов MM LAB и команда приёмки сторонних скриптов
+**Current focus:** Phase 03 — convention
 
 ## Current Position
 
-Phase: 3 of 3 (Конвенция правил скриптов MM LAB и команда проверки/адаптации сторонних скриптов)
-Plan: 0 of 0 in current phase
-Status: Not planned yet
-Last activity: 2026-07-21 - Added Phase 3 to roadmap (конвенция скриптов + Claude-команда приёмки)
+Phase: 03 (convention) — EXECUTING
+Plan: 2 of 7
+Status: Ready to execute
+Last activity: 2026-07-24 — Phase 03 execution started
 
 Progress: [██████░░░░] 67%
 
@@ -48,6 +48,8 @@ Progress: [██████░░░░] 67%
 ### Decisions
 
 - [Phase 1]: Общие helper-функции ИОС должны быть вынесены в верхнеуровневый shared-модуль
+- [Phase 03-convention]: Чекер конвенции: bundle.yaml разбирается построчным stdlib-парсером ограниченной схемы (без PyYAML); ограничение задокументировано в docstring
+- [Phase 03-convention]: Пути нарушений чекера — POSIX-relpath от --root: стабильные ключи для baseline grandfathering legacy-кнопок
 
 ### Pending Todos
 
@@ -62,6 +64,7 @@ Progress: [██████░░░░] 67%
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260709-jko | ИОС panel: AttributeError на RBS_DUCT_LOSS_METHOD_SERVER_PARAM + bool/string outcome mismatch в ensure_loss_method_undefined | 2026-07-09 | (pending) | [260709-jko-get-parameter-typeerror-builtinparameter](./quick/260709-jko-get-parameter-typeerror-builtinparameter/) |
+| Phase 03-convention P01 | 17 min | 2 tasks | 10 files |
 
 ### Roadmap Evolution
 
@@ -71,6 +74,6 @@ Progress: [██████░░░░] 67%
 
 ## Session Continuity
 
-Last session: 2026-07-24T09:10:56.562Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-convention/03-CONTEXT.md
+Last session: 2026-07-24T11:07:23.403Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: None
