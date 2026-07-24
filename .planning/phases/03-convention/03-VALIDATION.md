@@ -45,8 +45,8 @@ updated: 2026-07-24
 | 03-01 T2 (GREEN: чекер MM000–MM007, MM013) | 03-01 | 1 | CONV-CHECK, CONV-REG | T-03-01, T-03-02, T-03-03 | нет import/exec/eval; пути нормализованы | unit | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` | ✅ после T1 | ⬜ pending |
 | 03-02 T1 (revit_compat.py) | 03-02 | 1 | CONV-STD | T-03-05, T-03-06 | compat не открывает транзакций; fail-fast D-03 | smoke | `py -3 -m py_compile "MM LAB.extension/lib/revit_compat.py"` | ✅ | ⬜ pending |
 | 03-02 T2 (контрактный тест) | 03-02 | 1 | CONV-STD | — | — | unit (ast-контракт) | `py -3 -m unittest discover -s tools/tests -p "test_revit_compat*.py" -q` | создаёт | ⬜ pending |
-| 03-03 T1 (RED: AST-правила) | 03-03 | 2 | CONV-CHECK | T-03-01 | — | unit (RED) | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` (ожидаемо ≠0) | ✅ | ⬜ pending |
-| 03-03 T2 (GREEN: MM008–MM012) | 03-03 | 2 | CONV-CHECK | T-03-01, T-03-08 | first-party список из стемов, без исполнения | unit | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` | ✅ | ⬜ pending |
+| 03-03 T1 (RED: AST-правила MM008–MM012, MM014) | 03-03 | 2 | CONV-CHECK | T-03-01 | — | unit (RED) | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` (ожидаемо ≠0) | ✅ | ⬜ pending |
+| 03-03 T2 (GREEN: MM008–MM012, MM014) | 03-03 | 2 | CONV-CHECK | T-03-01, T-03-08 | first-party список из стемов, без исполнения | unit | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` | ✅ | ⬜ pending |
 | 03-04 T1 (шаблон кнопки) | 03-04 | 3 | CONV-STD | T-03-09, T-03-10 | Transaction+RollBack; require_supported_version | integration | `py -3 -m py_compile "templates/НоваяКнопка.pushbutton/script.py" && py -3 tools/check_convention.py "templates/НоваяКнопка.pushbutton" --strict` | ✅ | ⬜ pending |
 | 03-04 T2 (baseline + tab fix + full suite) | 03-04 | 3 | CONV-CHECK, CONV-REG | T-03-11, T-03-12 | орфан удаляется только при отсутствии папки | integration | full suite command | ✅ | ⬜ pending |
 | 03-05 T1 (AGENTS.md) | 03-05 | 3 | CONV-STD | T-03-13, T-03-15 | git-запреты в тексте; без userEmail/currentDate | doc-assert | py-однострочник из плана (маркеры разделов) | ✅ | ⬜ pending |
@@ -66,7 +66,7 @@ updated: 2026-07-24
 Wave 0 фазы = план 03-01 Task 1 (первая волна, до любой реализации чекера):
 
 - [ ] `tools/tests/test_check_convention.py` — покрывает CONV-CHECK/CONV-REG (тест на каждое правило)
-- [ ] `tools/tests/fixtures/repo_ok/…` и `fixtures/repo_bad/…` — эталонные деревья pushbutton (bad: BOM, нет шапки/README/bundle.yaml, орфаны layout; AST-дефекты добавляет план 03-03)
+- [ ] `tools/tests/fixtures/repo_ok/…` и `fixtures/repo_bad/…` — эталонные деревья pushbutton (bad: BOM, нет шапки/README/bundle.yaml, орфаны layout; AST-дефекты, включая legacy-бутстрап EXTENSION_ROOT для MM014, добавляет план 03-03)
 - [ ] `tools/convention_baseline.json` — генерируется чекером из фактического аудита (план 03-04 Task 2, `--write-baseline`)
 - [ ] Framework install — не требуется (stdlib `unittest`)
 

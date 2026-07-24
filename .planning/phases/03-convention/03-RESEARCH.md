@@ -509,18 +509,22 @@ layout:
 | A4 | `__revit__` доступен внутри lib-модулей на среде пользователей (работает в проде `ios_common_helpers.get_document`) | Pitfall 3 | compat должен использовать builtins-фолбэк — уже заложено в рекомендацию |
 | A5 | Свежие Gemini CLI читают AGENTS.md нативно (agents.md указывает Gemini CLI в списке поддержки) | Pattern 1 | Не влияет: GEMINI.md-указатель с @AGENTS.md работает на всех версиях |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Судьба текущего содержимого root CLAUDE.md (GSD Release Map, Obsidian-поток)**
    - Известно: D-21 велит перенести graphify и Obsidian-поток в стандарт; D-05 — CLAUDE.md становится тонким указателем.
    - Неясно: GSD-блок («Синхронизируй gsd») — Claude-специфичен (GSD живёт в .claude) или общий? Рекомендация: GSD-блок оставить в CLAUDE.md под @AGENTS.md (Claude-специфика), Obsidian/graphify — в AGENTS.md. Решить при ревью AGENTS.md (гейт D-08-подобный).
+   - **RESOLVED (план 03-05):** GSD-блок («Синхронизируй gsd») остаётся в CLAUDE.md под строкой `@AGENTS.md` как Claude-специфика; правила graphify и Obsidian-поток переносятся в AGENTS.md (D-21).
 2. **Формат «полный документ конвенции»: AGENTS.md = весь текст vs AGENTS.md-ядро + docs/КОНВЕНЦИЯ.md**
    - Известно: D-05 называет AGENTS.md источником правды; spec agents.md не ограничивает размер, но контекст грузится каждую сессию каждым агентом.
    - Рекомендация: один AGENTS.md (~200–300 строк, только правила и ссылки на templates/tools); без отдельного дубля-документа. Если вырастет — выносить справочники (таблица ломающих изменений) в `agents/` с ссылками.
+   - **RESOLVED (план 03-05):** один канонический AGENTS.md (~200–300 строк) — полный текст конвенции; отдельный docs/КОНВЕНЦИЯ.md не создаётся.
 3. **`/mm-doctor`: как проверять «версию Revit vs поддерживаемые» без Revit**
    - Известно: из CLI Revit не запросить; установленные версии видны в реестре (`HKLM\SOFTWARE\Autodesk\Revit`) или по папкам `C:\Program Files\Autodesk\Revit 20XX`.
    - Рекомендация: doctor сверяет НАЙДЕННЫЕ установки с SUPPORTED_VERSIONS + проверяет целостность репо (vendored lib, полнота кнопок, орфаны layout, BOM-скан). Runtime-проверка версии остаётся в самих кнопках (D-03).
+   - **RESOLVED (план 03-06, Task 3 /mm-doctor):** doctor сверяет установленные версии Revit (папки `C:\Program Files\Autodesk\Revit 20*` и/или реестр `HKLM\SOFTWARE\Autodesk\Revit`) с SUPPORTED_VERSIONS из revit_compat; runtime-проверку версии выполняют сами кнопки через require_supported_version (D-03).
 4. **Адаптировать ли IFC_Двери/IFC_Окна в рамках фазы** — это исполнение `/mm-adopt-script` на реальных данных (отличный UAT), но не входит в объём ROADMAP. Рекомендация: UAT-сценарий фазы, отдельный quick task.
+   - **RESOLVED:** адаптация IFC_Двери/IFC_Окна — UAT-сценарий фазы (03-VALIDATION.md §Manual-Only Verifications: прогон /mm-adopt-script на IFC_Двери), не обязательный объём; выполняется отдельным quick task при исполнении команды.
 
 ## Environment Availability
 
