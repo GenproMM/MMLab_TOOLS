@@ -8,6 +8,10 @@
 import/exec/eval чужого кода). Переиспользуется командой приёмки
 ``/mm-adopt-script`` как гейт (в режиме ``--strict``).
 
+В папке кнопки проверяются ВСЕ ``*.py``: script.py — полностью, соседние
+модули — MM000/MM003 и AST-правила (правила шапки MM001/MM002/MM004
+обязательны только для script.py).
+
 Вызов::
 
     py -3 tools/check_convention.py [PATHS...] [--all] [--strict] [--json]
@@ -420,10 +424,14 @@ def check_ast_rules(tree, allowed_roots) -> list[Violation]:
 # --- правила уровня файла (MM000–MM004) ------------------------------------
 
 def _check_script_file(script_path: Path, unit_path: str,
-                       allowed_roots: set[str]) -> list[Violation]:
+                       allowed_roots: set[str],
+                       header_rules: bool = True) -> list[Violation]:
     """MM000–MM004 и AST-правила для одного файла.
 
     unit_path — значение Violation.path (папка кнопки или сам файл).
+    header_rules=False — правила шапки MM001/MM002/MM004 пропускаются
+    (соседние модули кнопки: шапка обязательна только для script.py,
+    см. таблицу RULES; MM000/MM003 и AST-правила применяются всегда).
     """
     violations: list[Violation] = []
     try:
@@ -438,13 +446,14 @@ def _check_script_file(script_path: Path, unit_path: str,
         violations.append(_violation("MM003", unit_path, line=1))
 
     text = raw.decode("utf-8-sig", errors="replace")
-    lines = text.splitlines()
-    first = lines[0].rstrip() if lines else ""
-    second = lines[1].rstrip() if len(lines) > 1 else ""
-    if first != SHEBANG:
-        violations.append(_violation("MM001", unit_path, line=1))
-    if second != CODING_LINE:
-        violations.append(_violation("MM002", unit_path, line=2))
+    if header_rules:
+        lines = text.splitlines()
+        first = lines[0].rstrip() if lines else ""
+        second = lines[1].rstrip() if len(lines) > 1 else ""
+        if first != SHEBANG:
+            violations.append(_violation("MM001", unit_path, line=1))
+        if second != CODING_LINE:
+            violations.append(_violation("MM002", unit_path, line=2))
 
     try:
         tree = ast.parse(text, filename=str(script_path))
@@ -458,10 +467,11 @@ def _check_script_file(script_path: Path, unit_path: str,
         ))
         return violations  # дальше файл не проверяем
 
-    docstring = ast.get_docstring(tree)
-    if not docstring or any(marker not in docstring
-                            for marker in DOCSTRING_MARKERS):
-        violations.append(_violation("MM004", unit_path))
+    if header_rules:
+        docstring = ast.get_docstring(tree)
+        if not docstring or any(marker not in docstring
+                                for marker in DOCSTRING_MARKERS):
+            violations.append(_violation("MM004", unit_path))
 
     for violation in check_ast_rules(tree, allowed_roots):
         violation.path = unit_path
@@ -550,7 +560,13 @@ def _check_junk(button_dir: Path, unit_path: str) -> list[Violation]:
 # --- публичные проверки ----------------------------------------------------
 
 def check_pushbutton(button_dir, root) -> list[Violation]:
-    """Полная проверка папки кнопки ``*.pushbutton`` (юнит конвенции)."""
+    """Полная проверка папки кнопки ``*.pushbutton`` (юнит конвенции).
+
+    Проверяются ВСЕ ``*.py`` в папке кнопки: script.py — полностью
+    (шапка MM001/MM002/MM004 + MM000/MM003 + AST-правила), соседние
+    модули — MM000/MM003 и AST-правила (MM008–MM012, MM014): сторонний
+    импорт нельзя спрятать в helpers.py рядом со script.py.
+    """
     button_path = Path(button_dir).resolve()
     root_path = Path(root).resolve()
     unit_path = _rel_posix(button_path, root_path)
@@ -558,6 +574,13 @@ def check_pushbutton(button_dir, root) -> list[Violation]:
     violations: list[Violation] = []
     violations.extend(_check_script_file(button_path / "script.py", unit_path,
                                          allowed_roots))
+    for py_file in sorted(button_path.glob("*.py")):
+        if py_file.name == "script.py" or not py_file.is_file():
+            continue
+        for violation in _check_script_file(py_file, unit_path, allowed_roots,
+                                            header_rules=False):
+            violation.message = f"{py_file.name}: {violation.message}"
+            violations.append(violation)
     violations.extend(_check_bundle_yaml(button_path, unit_path))
     if not (button_path / "README.md").is_file():
         violations.append(_violation("MM006", unit_path))
