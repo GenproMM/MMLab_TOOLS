@@ -65,6 +65,7 @@ Progress: [██████░░░░] 67%
 ### Blockers/Concerns
 
 - Functional UAT в Revit не выполняется в headless-среде и вынесен в follow-up.
+- Phase 03: автоматическая верификация пройдена (34/34 must-haves, 56 тестов, ревью clean), но 5 пунктов UAT требуют живого Revit / интерактивной сессии — отложены (см. ## Deferred Verification).
 
 ### Quick Tasks Completed
 
@@ -85,8 +86,16 @@ Progress: [██████░░░░] 67%
 - Phase 2 added: Проанализировать все скрипты на наличие общих повторяющихся функций, вынести их в ./lib и добавить импорты в скриптах
 - Phase 3 added (целевой релиз v260724): Конвенция правил скриптов MM LAB и Claude-команда проверки/адаптации сторонних скриптов при добавлении в MM LAB.tab
 
+## Deferred Verification
+
+| Phase | State | Resume |
+|-------|-------|--------|
+| 03 | verification_deferred_human | /gsd-verify-work 3 |
+
+Автоматическая верификация Phase 03 пройдена полностью; отложены 5 ручных UAT-пунктов (живой Revit 2020/2022/2024, интерактивный прогон /mm-adopt-script, quick task, кнопка из шаблона на панели, /mm-check + /mm-doctor) — см. .planning/phases/03-convention/03-UAT.md. Milestone lifecycle (audit → complete → cleanup) НЕ запускается до прохождения UAT.
+
 ## Session Continuity
 
 Last session: 2026-07-24T12:38:10.227Z
-Stopped at: Completed 03-07-PLAN.md
+Stopped at: Phase 03 verification_deferred_human (UAT отложен пользователем)
 Resume file: None
