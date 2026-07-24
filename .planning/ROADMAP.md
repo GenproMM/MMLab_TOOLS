@@ -75,4 +75,4 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 03-07-PLAN.md — Адаптеры команд для Claude/Gemini/Kilo + каталожный тест
+- [x] 03-07-PLAN.md — Адаптеры команд для Claude/Gemini/Kilo + каталожный тест

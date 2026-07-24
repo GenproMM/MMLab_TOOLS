@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 03-06-PLAN.md
-last_updated: "2026-07-24T12:24:19.723Z"
+status: verifying
+stopped_at: Completed 03-07-PLAN.md
+last_updated: "2026-07-24T12:38:10.230Z"
 last_activity: 2026-07-24
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 7
-  completed_plans: 6
-  percent: 86
+  completed_plans: 7
+  percent: 100
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 
 Phase: 03 (convention) — EXECUTING
 Plan: 7 of 7
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-24
 
 Progress: [██████░░░░] 67%
@@ -55,6 +55,8 @@ Progress: [██████░░░░] 67%
 - [Phase 03-convention]: AGENTS.md: канонический бутстрап-блок размещён без отступа списка — дословная копипаста шаблона; запрет легаси-формы MM014 описан без литерального легаси-имени переменной (гейт acceptance)
 - [Phase 03-convention]: Белый список импортов в AGENTS.md сверен с HOST_IMPORT_ROOTS чекера (включая Microsoft), а не с сокращённой формулировкой плана — стандарт совпадает с реализацией до буквы
 - [Phase 03-convention]: Канонические процедуры mm-команд: полный текст только в agents/commands/ (5 секций, гейты D-08/D-10/D-17/D-18 текстом); Claude-специфичный путь /gsd-quick всегда с ручной альтернативой для Gemini/Kilo
+- [Phase 03-07]: Адаптеры mm-команд: маркер аргументов ($ARGUMENTS/{{args}}) во всех 21 адаптере единообразно; Gemini — плоские mm-*.toml (подпапка дала бы /mm:слаг)
+- [Phase 03-07]: Каталожный тест: substring-ассерты без tomllib (контракт CPython >= 3.10); любой mm-* файл вне SLUGS в каталогах адаптеров — красный тест
 
 ### Pending Todos
 
@@ -75,6 +77,7 @@ Progress: [██████░░░░] 67%
 | Phase 03-convention P04 | 10 min | 2 tasks | 5 files |
 | Phase 03-convention P05 | 9 min | 2 tasks | 4 files |
 | Phase 03-convention P06 | 9 min | 3 tasks | 7 files |
+| Phase 03-convention P07 | 9 min | 2 tasks | 22 files |
 
 ### Roadmap Evolution
 
@@ -84,6 +87,6 @@ Progress: [██████░░░░] 67%
 
 ## Session Continuity
 
-Last session: 2026-07-24T12:24:19.720Z
-Stopped at: Completed 03-06-PLAN.md
+Last session: 2026-07-24T12:38:10.227Z
+Stopped at: Completed 03-07-PLAN.md
 Resume file: None
