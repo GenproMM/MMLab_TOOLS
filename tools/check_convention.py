@@ -25,10 +25,16 @@ import/exec/eval чужого кода). Переиспользуется ком
   ``templates/`` в ``--all`` не входит (проверяется явным путём).
 * ``--root`` — корень репозитория; по умолчанию текущая директория.
   От него строится белый список first-party импортов (MM008).
-* ``--baseline PATH`` — JSON с допущенными нарушениями legacy-кнопок;
-  отфильтровывает совпадающие пары (путь юнита, код правила).
+* ``--baseline PATH`` — JSON с допущенными нарушениями; отфильтровывает
+  совпадающие пары (путь юнита, код правила). Две секции одинаковой схемы
+  ``{путь: [коды]}``: ``units`` — грандфазеринг legacy-кнопок, и
+  ``pending_adoption`` — ВРЕМЕННЫЕ допуски кнопок, физически присутствующих
+  в рабочем дереве, но ещё не принятых через ``/mm-adopt-script``; при
+  приёмке запись удаляется (гейт приёмки ``--strict`` baseline игнорирует).
 * ``--write-baseline PATH`` — записать baseline из ВСЕХ текущих нарушений
-  и завершиться с кодом 0.
+  и завершиться с кодом 0. Секция ``pending_adoption`` существующего файла
+  сохраняется как есть, а её пути в ``units`` не попадают — временные
+  допуски не превращаются в грандфазеринг.
 * ``--strict`` — baseline игнорируется, warning считаются error
   (гейт приёмки, решение D-08).
 * ``--json`` — только машинный вывод в stdout (ровно один JSON-объект).
@@ -165,8 +171,12 @@ RULES: dict[str, tuple[str, str]] = {
               "на 4 уровня «..» запрещены (D-15)"),
 }
 
-BASELINE_NOTE = ("Grandfathered legacy-кнопки. "
+BASELINE_NOTE = ("Grandfathered legacy-кнопки (units) и временные допуски "
+                 "ещё не принятых кнопок (pending_adoption). "
                  "При адаптации кнопки удали её запись.")
+
+# Секции baseline одинаковой схемы {путь: [коды]} (см. docstring модуля).
+BASELINE_SECTIONS = ("units", "pending_adoption")
 
 
 @dataclasses.dataclass
@@ -674,39 +684,64 @@ def iter_pushbuttons(root) -> list[Path]:
 # --- baseline ---------------------------------------------------------------
 
 def load_baseline(path) -> dict:
-    """Читает baseline JSON (схема: generated/note/units).
+    """Читает baseline JSON (схема: generated/note/units[/pending_adoption]).
 
-    Валидирует схему units (объект {путь: [коды]}): битый baseline даёт
-    ValueError, который main() превращает в чистый exit 2 с русским
-    сообщением, а не в traceback.
+    Валидирует схему секций units и pending_adoption (объект {путь: [коды]}):
+    битый baseline даёт ValueError, который main() превращает в чистый
+    exit 2 с русским сообщением, а не в traceback.
     """
     with open(path, "r", encoding="utf-8-sig") as handle:
         data = json.load(handle)
     if not isinstance(data, dict):
         raise ValueError("baseline должен быть JSON-объектом")
-    units = data.get("units", {})
-    if not isinstance(units, dict) or any(
-            not isinstance(codes, list) for codes in units.values()):
-        raise ValueError("baseline: units должен быть объектом "
-                         "{путь: [коды]}")
+    for section in BASELINE_SECTIONS:
+        table = data.get(section, {})
+        if not isinstance(table, dict) or any(
+                not isinstance(codes, list) for codes in table.values()):
+            raise ValueError(f"baseline: {section} должен быть объектом "
+                             "{путь: [коды]}")
     return data
 
 
 def apply_baseline(violations, baseline) -> list[Violation]:
-    """Отфильтровывает нарушения, допущенные baseline (пары путь+код)."""
-    units = baseline.get("units", {}) if isinstance(baseline, dict) else {}
+    """Отфильтровывает нарушения, допущенные baseline (пары путь+код).
+
+    Учитываются обе секции: units (грандфазеринг legacy-кнопок) и
+    pending_adoption (временные допуски ещё не принятых кнопок).
+    """
     allowed: set[tuple[str, str]] = set()
-    for unit_path, codes in units.items():
-        for code in codes:
-            allowed.add((str(unit_path), str(code)))
+    if isinstance(baseline, dict):
+        for section in BASELINE_SECTIONS:
+            table = baseline.get(section, {})
+            if not isinstance(table, dict):
+                continue
+            for unit_path, codes in table.items():
+                for code in codes:
+                    allowed.add((str(unit_path), str(code)))
     return [violation for violation in violations
             if (violation.path, violation.code) not in allowed]
 
 
 def write_baseline(violations, path) -> None:
-    """Пишет baseline из всех переданных нарушений (units: путь -> коды)."""
+    """Пишет baseline из всех переданных нарушений (units: путь -> коды).
+
+    Секция pending_adoption существующего файла по адресу path сохраняется
+    как есть, а её пути исключаются из генерируемых units: временные
+    допуски ещё не принятых кнопок не должны превращаться в грандфазеринг
+    (политика AGENTS.md «новые нарушения baseline не покрывает»).
+    """
+    pending: dict = {}
+    try:
+        existing = load_baseline(path)
+    except (OSError, ValueError):
+        existing = {}
+    raw_pending = existing.get("pending_adoption", {})
+    if isinstance(raw_pending, dict):
+        pending = raw_pending
     units: dict[str, set[str]] = {}
     for violation in violations:
+        if violation.path in pending:
+            continue
         units.setdefault(violation.path, set()).add(violation.code)
     data = {
         "generated": datetime.date.today().isoformat(),
@@ -714,6 +749,11 @@ def write_baseline(violations, path) -> None:
         "units": {unit_path: sorted(codes)
                   for unit_path, codes in sorted(units.items())},
     }
+    if pending:
+        data["pending_adoption"] = {
+            str(unit_path): sorted(str(code) for code in codes)
+            for unit_path, codes in sorted(pending.items())
+        }
     with open(path, "w", encoding="utf-8", newline="\n") as handle:
         json.dump(data, handle, ensure_ascii=False, indent=2)
         handle.write("\n")

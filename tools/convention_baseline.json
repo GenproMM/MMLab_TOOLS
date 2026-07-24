@@ -1,31 +1,7 @@
 {
   "generated": "2026-07-24",
-  "note": "Grandfathered legacy-кнопки. При адаптации кнопки удали её запись.",
+  "note": "Grandfathered legacy-кнопки (units) и временные допуски ещё не принятых кнопок (pending_adoption). При адаптации кнопки удали её запись.",
   "units": {
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton": [
-      "MM001",
-      "MM002",
-      "MM004",
-      "MM005",
-      "MM006",
-      "MM007",
-      "MM009",
-      "MM010",
-      "MM011",
-      "MM012"
-    ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton": [
-      "MM001",
-      "MM002",
-      "MM004",
-      "MM005",
-      "MM006",
-      "MM007",
-      "MM009",
-      "MM010",
-      "MM011",
-      "MM012"
-    ],
     "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton": [
       "MM001",
       "MM002",
@@ -120,6 +96,32 @@
       "MM002",
       "MM004",
       "MM006",
+      "MM012"
+    ]
+  },
+  "pending_adoption": {
+    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton": [
+      "MM001",
+      "MM002",
+      "MM004",
+      "MM005",
+      "MM006",
+      "MM007",
+      "MM009",
+      "MM010",
+      "MM011",
+      "MM012"
+    ],
+    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton": [
+      "MM001",
+      "MM002",
+      "MM004",
+      "MM005",
+      "MM006",
+      "MM007",
+      "MM009",
+      "MM010",
+      "MM011",
       "MM012"
     ]
   }

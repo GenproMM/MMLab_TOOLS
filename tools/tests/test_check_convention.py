@@ -472,5 +472,56 @@ class CliTests(unittest.TestCase):
         self.assertEqual(remaining, [])
 
 
+class PendingAdoptionTests(unittest.TestCase):
+    """Секция pending_adoption baseline — временные допуски ещё не принятых кнопок."""
+
+    def _tmp_path(self, name):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        return Path(tmp.name) / name
+
+    def test_apply_baseline_filters_pending_adoption(self):
+        # apply_baseline учитывает обе секции: units и pending_adoption.
+        violations = check_convention.check_pushbutton(BAD_BUTTON, REPO_BAD)
+        self.assertTrue(violations)
+        unit_path = violations[0].path
+        baseline = {
+            "units": {},
+            "pending_adoption": {
+                unit_path: sorted({v.code for v in violations}),
+            },
+        }
+        remaining = check_convention.apply_baseline(violations, baseline)
+        self.assertEqual(remaining, [])
+
+    def test_load_baseline_validates_pending_adoption(self):
+        # Битая секция pending_adoption — ValueError (как и units).
+        path = self._tmp_path("baseline.json")
+        path.write_text('{"units": {}, "pending_adoption": []}',
+                        encoding="utf-8")
+        with self.assertRaises(ValueError):
+            check_convention.load_baseline(path)
+
+    def test_write_baseline_preserves_pending_adoption(self):
+        # --write-baseline сохраняет pending_adoption существующего файла
+        # и НЕ переносит его пути в units (допуск не превращается
+        # в грандфазеринг).
+        path = self._tmp_path("baseline.json")
+        violations = check_convention.check_pushbutton(BAD_BUTTON, REPO_BAD)
+        self.assertTrue(violations)
+        unit_path = violations[0].path
+        pending = {unit_path: sorted({v.code for v in violations})}
+        path.write_text(
+            json.dumps({"generated": "2026-01-01", "note": "x",
+                        "units": {}, "pending_adoption": pending},
+                       ensure_ascii=False),
+            encoding="utf-8",
+        )
+        check_convention.write_baseline(violations, path)
+        data = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(data["pending_adoption"], pending)
+        self.assertNotIn(unit_path, data["units"])
+
+
 if __name__ == "__main__":
     unittest.main()
