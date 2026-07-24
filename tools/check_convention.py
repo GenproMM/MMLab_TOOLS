@@ -644,11 +644,21 @@ def iter_pushbuttons(root) -> list[Path]:
 # --- baseline ---------------------------------------------------------------
 
 def load_baseline(path) -> dict:
-    """Читает baseline JSON (схема: generated/note/units)."""
+    """Читает baseline JSON (схема: generated/note/units).
+
+    Валидирует схему units (объект {путь: [коды]}): битый baseline даёт
+    ValueError, который main() превращает в чистый exit 2 с русским
+    сообщением, а не в traceback.
+    """
     with open(path, "r", encoding="utf-8-sig") as handle:
         data = json.load(handle)
     if not isinstance(data, dict):
         raise ValueError("baseline должен быть JSON-объектом")
+    units = data.get("units", {})
+    if not isinstance(units, dict) or any(
+            not isinstance(codes, list) for codes in units.values()):
+        raise ValueError("baseline: units должен быть объектом "
+                         "{путь: [коды]}")
     return data
 
 
