@@ -472,6 +472,71 @@ class CliTests(unittest.TestCase):
         self.assertEqual(remaining, [])
 
 
+class CheckerRegressionTests(unittest.TestCase):
+    """Регрессии фиксов ревью фазы 03 (итерация 1): WR-01, WR-02, WR-03, WR-07."""
+
+    def _tmp_dir(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        return Path(tmp.name)
+
+    def test_malformed_baseline_clean_exit_2(self):
+        # WR-01: битый baseline -> чистый exit 2 с русским сообщением
+        # в stderr (без traceback), а не необработанное исключение.
+        cases = ('{"units": []}', '{"units": {"a": "MM001"}}', "не JSON")
+        for payload in cases:
+            with self.subTest(payload=payload):
+                path = self._tmp_dir() / "bad_baseline.json"
+                path.write_text(payload, encoding="utf-8")
+                stderr = io.StringIO()
+                with contextlib.redirect_stderr(stderr):
+                    code, _out = run_main(
+                        ["--all", "--root", str(REPO_OK),
+                         "--baseline", str(path)]
+                    )
+                self.assertEqual(code, 2)
+                self.assertIn("Ошибка чтения baseline", stderr.getvalue())
+                self.assertNotIn("Traceback", stderr.getvalue())
+
+    def test_iter_pushbuttons_skips_junk_and_nested(self):
+        # WR-02: *.pushbutton внутри .vs/, __pycache__/ или другой кнопки —
+        # артефакты редакторов, кнопками НЕ считаются.
+        root, button = copy_button_to_tmp(self, with_panel=True)
+        tab_dir = root / "MM LAB.extension" / "MM Lab.tab"
+        (tab_dir / ".vs" / "Артефакт.pushbutton").mkdir(parents=True)
+        (tab_dir / "__pycache__" / "Кеш.pushbutton").mkdir(parents=True)
+        (button / "Вложенная.pushbutton").mkdir()
+        found = check_convention.iter_pushbuttons(root)
+        self.assertEqual(found, [button.resolve()])
+
+    def test_sibling_module_ast_rules(self):
+        # WR-03: AST-правила ловят сторонний импорт в соседнем helpers.py
+        # (сообщение с префиксом имени файла), а правила шапки script.py
+        # (MM001/MM002/MM004) на соседний модуль не распространяются.
+        root, button = copy_button_to_tmp(self, with_panel=False)
+        (button / "helpers.py").write_text("import requests\n",
+                                           encoding="utf-8")
+        violations = check_convention.check_pushbutton(button, root)
+        mm008 = [v for v in violations if v.code == "MM008"]
+        self.assertTrue(mm008, "ожидалось нарушение MM008 в helpers.py")
+        self.assertIn("helpers.py:", mm008[0].message)
+        codes = {v.code for v in violations}
+        self.assertFalse(codes & {"MM001", "MM002", "MM004"})
+
+    def test_write_baseline_json_prints_json_object(self):
+        # WR-07: --json --write-baseline печатает ровно один JSON-объект
+        # статуса в stdout (пустой stdout запрещён контрактом --json).
+        baseline_path = self._tmp_dir() / "baseline.json"
+        code, out = run_main(
+            ["--all", "--root", str(REPO_BAD),
+             "--write-baseline", str(baseline_path), "--json"]
+        )
+        self.assertEqual(code, 0)
+        data = json.loads(out)
+        self.assertEqual(data["baseline_written"], str(baseline_path))
+        self.assertGreater(data["violations"], 0)
+
+
 class PendingAdoptionTests(unittest.TestCase):
     """Секция pending_adoption baseline — временные допуски ещё не принятых кнопок."""
 
