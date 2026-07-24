@@ -71,7 +71,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 03-06-PLAN.md — Канонические процедуры 7 mm-команд в agents/commands/
+- [x] 03-06-PLAN.md — Канонические процедуры 7 mm-команд в agents/commands/
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
