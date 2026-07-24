@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 03
 current_phase_name: convention
 status: executing
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-07-24T11:07:37.603Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-07-24T11:22:47.199Z"
 last_activity: 2026-07-24
 last_activity_desc: Phase 03 execution started
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 7
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 ## Current Position
 
 Phase: 03 (convention) — EXECUTING
-Plan: 2 of 7
+Plan: 3 of 7
 Status: Ready to execute
 Last activity: 2026-07-24 — Phase 03 execution started
 
@@ -50,6 +50,7 @@ Progress: [██████░░░░] 67%
 - [Phase 1]: Общие helper-функции ИОС должны быть вынесены в верхнеуровневый shared-модуль
 - [Phase 03-convention]: Чекер конвенции: bundle.yaml разбирается построчным stdlib-парсером ограниченной схемы (без PyYAML); ограничение задокументировано в docstring
 - [Phase 03-convention]: Пути нарушений чекера — POSIX-relpath от --root: стабильные ключи для baseline grandfathering legacy-кнопок
+- [Phase 03-convention]: revit_compat: детекция версии каскадом (аргумент -> builtins.__revit__ -> pyrevit.HOST_APP через .version); при неопределённой версии units-ветка 2022+, гейт версии обязателен до convert_*
 
 ### Pending Todos
 
@@ -65,6 +66,7 @@ Progress: [██████░░░░] 67%
 |---|-------------|------|--------|-----------|
 | 260709-jko | ИОС panel: AttributeError на RBS_DUCT_LOSS_METHOD_SERVER_PARAM + bool/string outcome mismatch в ensure_loss_method_undefined | 2026-07-09 | (pending) | [260709-jko-get-parameter-typeerror-builtinparameter](./quick/260709-jko-get-parameter-typeerror-builtinparameter/) |
 | Phase 03-convention P01 | 17 min | 2 tasks | 10 files |
+| Phase 03-convention P02 | 10 min | 2 tasks | 2 files |
 
 ### Roadmap Evolution
 
@@ -74,6 +76,6 @@ Progress: [██████░░░░] 67%
 
 ## Session Continuity
 
-Last session: 2026-07-24T11:07:23.403Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-07-24T11:22:47.187Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None

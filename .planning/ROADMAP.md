@@ -29,7 +29,7 @@
 
 **Depends on:** Phase 2
 
-**Plans:** 1/7 plans executed
+**Plans:** 2/7 plans executed
 
 ### Объём работ
 
@@ -58,7 +58,7 @@ Plans:
 **Wave 1**
 
 - [x] 03-01-PLAN.md — Чекер конвенции: CLI-каркас и структурные правила MM000–MM007, MM013 (TDD)
-- [ ] 03-02-PLAN.md — revit_compat.py: единый compat-модуль Revit 2020/2022/2024 + контрактный тест
+- [x] 03-02-PLAN.md — revit_compat.py: единый compat-модуль Revit 2020/2022/2024 + контрактный тест
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
