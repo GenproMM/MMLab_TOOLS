@@ -18,7 +18,9 @@
 """
 
 import ast
+import os
 import py_compile
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -119,7 +121,15 @@ class TestRevitCompatContract(unittest.TestCase):
         )
 
     def test_compiles(self):
-        py_compile.compile(str(COMPAT_PATH), doraise=True)
+        # cfile — во временный каталог: без него py_compile пишет
+        # __pycache__/ в живое MM LAB.extension/lib (а /mm-doctor,
+        # запускающий этот тест, обязан быть read-only).
+        with tempfile.TemporaryDirectory() as tmp:
+            py_compile.compile(
+                str(COMPAT_PATH),
+                cfile=os.path.join(tmp, "revit_compat.pyc"),
+                doraise=True,
+            )
 
 
 if __name__ == "__main__":
