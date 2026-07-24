@@ -60,6 +60,12 @@ _BIP_NAME_CACHE = {}
 # Ленивая карта единиц измерения; строится при первом вызове convert_*.
 _UNITS_MAP = None
 
+# Версия Revit, валидированная require_supported_version: версионные
+# хелперы (_units_map, create_floor) переиспользуют её вместо повторной
+# детекции — повторная детекция теряет явный аргумент ``revit=`` и на
+# хосте без __revit__/HOST_APP молча уводит в ветку 2022+.
+_VALIDATED_VERSION = None
+
 
 # --- Версия Revit -----------------------------------------------------------
 
@@ -123,8 +129,12 @@ def require_supported_version(command_name, revit=None):
 
     Если версия не определена или не входит в SUPPORTED_VERSIONS —
     показывает TaskDialog с перечнем поддерживаемых версий и мягко
-    завершает скрипт через SystemExit. Иначе возвращает версию (int).
+    завершает скрипт через SystemExit. Иначе возвращает версию (int)
+    и кеширует её в _VALIDATED_VERSION: дальнейшие версионные ветвления
+    модуля (_units_map, create_floor) используют именно эту версию,
+    даже если она была получена через явный аргумент ``revit=``.
     """
+    global _VALIDATED_VERSION
     version = get_revit_version(revit)
     if version not in SUPPORTED_VERSIONS:
         supported_text = u" / ".join(str(item) for item in SUPPORTED_VERSIONS)
@@ -136,7 +146,20 @@ def require_supported_version(command_name, revit=None):
         ).format(supported_text, version_text)
         TaskDialog.Show(command_name, message)
         raise SystemExit(message)
+    _VALIDATED_VERSION = version
     return version
+
+
+def _effective_version():
+    """Версия Revit для версионных ветвлений хелперов модуля.
+
+    Сначала — версия, валидированная require_supported_version
+    (переживает и путь с явным аргументом ``revit=``), затем повторная
+    детекция get_revit_version(); None — версию определить не удалось.
+    """
+    if _VALIDATED_VERSION is not None:
+        return _VALIDATED_VERSION
+    return get_revit_version()
 
 
 # --- Параметры (D-04: pythonnet-обходы) --------------------------------------
@@ -286,12 +309,14 @@ def _units_map():
     Строится при первом вызове convert_from_internal/convert_to_internal,
     чтобы импорт модуля не зависел от версии Revit. Единственное
     версионное ветвление Units: Revit <= 2020 использует DisplayUnitType
-    (удалён в 2022), новее — UnitTypeId (ForgeTypeId). Если версия не
-    определена (None), берётся современная ветка 2022+.
+    (удалён в 2022), новее — UnitTypeId (ForgeTypeId). Версия берётся
+    через _effective_version (кеш require_supported_version, затем
+    повторная детекция); если версия не определена (None), берётся
+    современная ветка 2022+.
     """
     global _UNITS_MAP
     if _UNITS_MAP is None:
-        version = get_revit_version()
+        version = _effective_version()
         if version is not None and version <= 2020:
             from Autodesk.Revit.DB import DisplayUnitType
 
@@ -358,11 +383,12 @@ def create_floor(doc, curve_loops, floor_type_id, level_id):
     Revit 2022/2024: Floor.Create(doc, IList[CurveLoop], floor_type_id,
     level_id). Revit 2020: doc.Create.NewFloor(CurveArray, ...) — эта
     ветка не поддерживает отверстия: используется только ПЕРВЫЙ контур
-    из curve_loops, остальные игнорируются.
+    из curve_loops, остальные игнорируются. Версия — через
+    _effective_version (кеш require_supported_version).
 
     Возвращает созданный Floor.
     """
-    version = get_revit_version()
+    version = _effective_version()
     if version is not None and version <= 2020:
         first_loop = None
         for loop in curve_loops:
