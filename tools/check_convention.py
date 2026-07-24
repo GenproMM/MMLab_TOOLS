@@ -1,6 +1,6 @@
 #! python3
 # -*- coding: utf-8 -*-
-"""Чекер конвенции MM LAB — структурные правила и CLI (план 03-01).
+"""Чекер конвенции MM LAB — структурные и AST-правила, CLI (планы 03-01, 03-03).
 
 Машинный гейт конвенции написания pyRevit-скриптов MM LAB (решение D-06).
 Проверяет папки кнопок ``*.pushbutton`` и одиночные ``*.py`` без запуска
@@ -14,12 +14,13 @@ import/exec/eval чужого кода). Переиспользуется ком
         [--baseline PATH] [--write-baseline PATH] [--root PATH]
 
 * ``PATHS`` — папки ``*.pushbutton`` ИЛИ одиночные ``*.py`` (режим «сырого
-  скрипта»: только правила уровня файла MM000–MM004; структурные MM005–MM007,
-  MM013 пропускаются).
+  скрипта»: правила уровня файла MM000–MM004 и AST-правила MM008–MM012,
+  MM014; структурные MM005–MM007, MM013 пропускаются).
 * ``--all`` — обход ``<root>/MM LAB.extension/MM Lab.tab/**/*.pushbutton``
   плюс проверка орфанов layout в tab- и panel-``bundle.yaml``. Папка
   ``templates/`` в ``--all`` не входит (проверяется явным путём).
 * ``--root`` — корень репозитория; по умолчанию текущая директория.
+  От него строится белый список first-party импортов (MM008).
 * ``--baseline PATH`` — JSON с допущенными нарушениями legacy-кнопок;
   отфильтровывает совпадающие пары (путь юнита, код правила).
 * ``--write-baseline PATH`` — записать baseline из ВСЕХ текущих нарушений
@@ -31,7 +32,7 @@ import/exec/eval чужого кода). Переиспользуется ком
 Exit-коды: 0 — чисто, 1 — есть нарушения (error; в ``--strict`` — и warning),
 2 — ошибка использования/внутренняя.
 
-Правила этого модуля (AST-правила MM008–MM012 и MM014 добавляет план 03-03):
+Правила модуля:
 
 ===== ======== ==============================================================
 Код   Severity Проверка
@@ -46,7 +47,20 @@ MM006 error    в папке кнопки есть README.md
 MM007 error    (а) кнопка зарегистрирована в layout родительского
                panel-bundle.yaml (кнопка вне ``*.panel`` — пропуск);
                (б) каждая запись layout имеет папку на диске, иначе орфан
+MM008 error    корень абсолютного импорта входит в белый список
+               ``allowed_import_roots``: stdlib (sys.stdlib_module_names),
+               хост-платформа (clr/System/Autodesk/pyrevit/Microsoft),
+               first-party ``<root>/MM LAB.extension/lib/*.py``, vendored
+               (openpyxl, et_xmlfile); относительные импорты пропускаются
+MM009 error    запрещён wildcard-импорт ``from X import *``
+MM010 warning  вызов ``LookupParameter("строковый литерал")`` — используй
+               revit_compat.get_parameter / get_shared_parameter
+MM011 warning  голый ``except:`` запрещён
+MM012 warning  импорт pyrevit.forms (не работает под CPython3)
 MM013 warning  в папке кнопки нет мусора: __pycache__/, *.pyc, .vs/, *.csv
+MM014 warning  неканонический lib-бутстрап (D-06/D-15): имя EXTENSION_ROOT,
+               подъём ``os.path.join`` на 4+ «..» или sys.path-вызов,
+               отличный от ``sys.path.insert(0, _LIB_DIR)``
 ===== ======== ==============================================================
 
 Ограничение парсера bundle.yaml
@@ -87,11 +101,23 @@ DOCSTRING_MARKERS = ("Совместимость:", "Зависимости:")
 
 EXTENSION_DIR_NAME = "MM LAB.extension"
 TAB_DIR_NAME = "MM Lab.tab"
+LIB_DIR_NAME = "lib"
 PUSHBUTTON_SUFFIX = ".pushbutton"
 PANEL_SUFFIX = ".panel"
 
 JUNK_DIR_NAMES = {"__pycache__", ".vs"}
 JUNK_FILE_SUFFIXES = {".pyc", ".csv"}
+
+# MM008: корни импортов хост-платформы и vendored-пакетов (кроме stdlib
+# и first-party lib, которые вычисляются в allowed_import_roots).
+HOST_IMPORT_ROOTS = {"clr", "System", "Autodesk", "pyrevit", "Microsoft"}
+VENDORED_IMPORT_ROOTS = {"openpyxl", "et_xmlfile"}
+
+# MM014: детали канона и триггеров lib-бутстрапа (D-06/D-15).
+CANONICAL_LIB_DIR_NAME = "_LIB_DIR"
+LEGACY_BOOTSTRAP_NAME = "EXTENSION_ROOT"
+PARENT_HOPS_LIMIT = 4  # join с 4+ аргументами ".." — подъём в корень репо
+SYS_PATH_METHODS = {"insert", "append", "extend"}
 
 SEVERITY_ERROR = "error"
 SEVERITY_WARNING = "warning"
@@ -111,8 +137,28 @@ RULES: dict[str, tuple[str, str]] = {
     "MM006": (SEVERITY_ERROR, "в папке кнопки нет README.md"),
     "MM007": (SEVERITY_ERROR,
               "кнопка/запись не согласована с layout bundle.yaml"),
+    "MM008": (SEVERITY_ERROR,
+              "сторонний импорт — вне белого списка (stdlib, "
+              "clr/System/Autodesk/pyrevit, lib, vendored)"),
+    "MM009": (SEVERITY_ERROR,
+              "wildcard-импорт «from X import *» запрещён — "
+              "импортируй имена явно"),
+    "MM010": (SEVERITY_WARNING,
+              "LookupParameter со строковым литералом — используй "
+              "revit_compat.get_parameter (BuiltInParameter) или "
+              "get_shared_parameter (GUID)"),
+    "MM011": (SEVERITY_WARNING,
+              "голый «except:» — укажи класс исключения"),
+    "MM012": (SEVERITY_WARNING,
+              "pyrevit.forms не работает под CPython3 — используй "
+              "TaskDialog или WinForms"),
     "MM013": (SEVERITY_WARNING,
               "мусор в папке кнопки (__pycache__/, *.pyc, .vs/, *.csv)"),
+    "MM014": (SEVERITY_WARNING,
+              "неканонический lib-бутстрап — используй канонический блок "
+              "_EXTENSION_DIR/_LIB_DIR из шаблона/AGENTS.md "
+              "(sys.path.insert(0, _LIB_DIR)); имя EXTENSION_ROOT и подъём "
+              "на 4 уровня «..» запрещены (D-15)"),
 }
 
 BASELINE_NOTE = ("Grandfathered legacy-кнопки. "
@@ -236,10 +282,149 @@ def _entry_has_folder(base_dir: Path, entry: str) -> bool:
     return False
 
 
+# --- AST-правила (MM008–MM012, MM014) ---------------------------------------
+
+def allowed_import_roots(root) -> set[str]:
+    """Белый список корней абсолютных импортов для MM008.
+
+    Состав: stdlib (``sys.stdlib_module_names``, Python >= 3.10) +
+    хост-платформа (clr/System/Autodesk/pyrevit/Microsoft) + first-party
+    модули ``<root>/MM LAB.extension/lib/*.py`` (динамически, ТОЛЬКО стемы
+    имён файлов — содержимое не читается и не исполняется, гейт T-03-08) +
+    vendored (openpyxl, et_xmlfile).
+
+    root=None — режим сырого скрипта вне репозитория: first-party
+    составляющая пропускается.
+    """
+    roots = set(sys.stdlib_module_names)
+    roots |= HOST_IMPORT_ROOTS
+    roots |= VENDORED_IMPORT_ROOTS
+    if root is not None:
+        lib_dir = Path(root).resolve() / EXTENSION_DIR_NAME / LIB_DIR_NAME
+        if lib_dir.is_dir():
+            for module_file in lib_dir.glob("*.py"):
+                if module_file.is_file():
+                    roots.add(module_file.stem)
+    return roots
+
+
+def _mm008_message(root_name: str) -> str:
+    return (f"сторонний импорт \"{root_name}\" — вне белого списка "
+            f"(stdlib, clr/System/Autodesk/pyrevit, lib, vendored)")
+
+
+def _is_pyrevit_forms_module(module_name: str) -> bool:
+    """MM012: имя модуля — pyrevit.forms или его подмодуль."""
+    return (module_name == "pyrevit.forms"
+            or module_name.startswith("pyrevit.forms."))
+
+
+def _is_sys_path(expr) -> bool:
+    """Выражение — атрибутная цепочка ``sys.path``."""
+    return (isinstance(expr, ast.Attribute) and expr.attr == "path"
+            and isinstance(expr.value, ast.Name) and expr.value.id == "sys")
+
+
+def _is_canonical_syspath_call(method: str, args) -> bool:
+    """Канон D-15: ровно ``sys.path.insert(0, _LIB_DIR)``."""
+    if method != "insert" or len(args) != 2:
+        return False
+    first, second = args
+    if not (isinstance(first, ast.Constant)
+            and type(first.value) is int and first.value == 0):
+        return False
+    return (isinstance(second, ast.Name)
+            and second.id == CANONICAL_LIB_DIR_NAME)
+
+
+def _check_import_node(node: ast.Import, allowed_roots) -> list[Violation]:
+    """MM008/MM012 для ``import X[.Y]``."""
+    violations: list[Violation] = []
+    for alias in node.names:
+        root_name = alias.name.split(".")[0]
+        if root_name not in allowed_roots:
+            violations.append(_violation("MM008", "", line=node.lineno,
+                                         message=_mm008_message(root_name)))
+        if _is_pyrevit_forms_module(alias.name):
+            violations.append(_violation("MM012", "", line=node.lineno))
+    return violations
+
+
+def _check_import_from_node(node: ast.ImportFrom,
+                            allowed_roots) -> list[Violation]:
+    """MM008/MM009/MM012 для ``from X import Y``."""
+    violations: list[Violation] = []
+    if any(alias.name == "*" for alias in node.names):
+        violations.append(_violation("MM009", "", line=node.lineno))
+    if node.level != 0:  # относительные импорты пропускаем
+        return violations
+    module = node.module or ""
+    root_name = module.split(".")[0]
+    if root_name and root_name not in allowed_roots:
+        violations.append(_violation("MM008", "", line=node.lineno,
+                                     message=_mm008_message(root_name)))
+    if _is_pyrevit_forms_module(module) or (
+            module == "pyrevit"
+            and any(alias.name == "forms" for alias in node.names)):
+        violations.append(_violation("MM012", "", line=node.lineno))
+    return violations
+
+
+def _check_call_node(node: ast.Call) -> list[Violation]:
+    """MM010 и MM014(б, в) для вызовов методов."""
+    violations: list[Violation] = []
+    func = node.func
+    if not isinstance(func, ast.Attribute):
+        return violations
+    if func.attr == "LookupParameter":
+        if (node.args and isinstance(node.args[0], ast.Constant)
+                and isinstance(node.args[0].value, str)):
+            violations.append(_violation("MM010", "", line=node.lineno))
+    elif func.attr == "join":
+        hops = sum(1 for arg in node.args
+                   if isinstance(arg, ast.Constant)
+                   and isinstance(arg.value, str) and arg.value == "..")
+        if hops >= PARENT_HOPS_LIMIT:
+            violations.append(_violation("MM014", "", line=node.lineno))
+    elif func.attr in SYS_PATH_METHODS and _is_sys_path(func.value):
+        if not _is_canonical_syspath_call(func.attr, node.args):
+            violations.append(_violation("MM014", "", line=node.lineno))
+    return violations
+
+
+def check_ast_rules(tree, allowed_roots) -> list[Violation]:
+    """AST-правила MM008–MM012 и MM014 одним обходом ``ast.walk``.
+
+    Возвращает нарушения с пустым ``path`` — вызывающий проставляет
+    unit_path. Работает только по уже распарсенному дереву: проверяемый
+    код не импортируется и не исполняется (гейт T-03-01).
+    """
+    violations: list[Violation] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            violations.extend(_check_import_node(node, allowed_roots))
+        elif isinstance(node, ast.ImportFrom):
+            violations.extend(_check_import_from_node(node, allowed_roots))
+        elif isinstance(node, ast.ExceptHandler):
+            if node.type is None:
+                violations.append(_violation("MM011", "", line=node.lineno))
+        elif isinstance(node, ast.Call):
+            violations.extend(_check_call_node(node))
+        elif isinstance(node, ast.Name):
+            # MM014(а): имя EXTENSION_ROOT в любом контексте (Load/Store/...).
+            if node.id == LEGACY_BOOTSTRAP_NAME:
+                violations.append(_violation("MM014", "", line=node.lineno))
+    return violations
+
+
 # --- правила уровня файла (MM000–MM004) ------------------------------------
 
-def _check_script_file(script_path: Path, unit_path: str) -> list[Violation]:
-    """MM000–MM004 для одного файла; unit_path — значение Violation.path."""
+def _check_script_file(script_path: Path, unit_path: str,
+                       allowed_roots: set[str]) -> list[Violation]:
+    """MM000–MM004 и AST-правила для одного файла.
+
+    unit_path — значение Violation.path (папка кнопки или сам файл).
+    """
     violations: list[Violation] = []
     try:
         raw = _read_bytes(script_path)
@@ -277,6 +462,10 @@ def _check_script_file(script_path: Path, unit_path: str) -> list[Violation]:
     if not docstring or any(marker not in docstring
                             for marker in DOCSTRING_MARKERS):
         violations.append(_violation("MM004", unit_path))
+
+    for violation in check_ast_rules(tree, allowed_roots):
+        violation.path = unit_path
+        violations.append(violation)
     return violations
 
 
@@ -365,8 +554,10 @@ def check_pushbutton(button_dir, root) -> list[Violation]:
     button_path = Path(button_dir).resolve()
     root_path = Path(root).resolve()
     unit_path = _rel_posix(button_path, root_path)
+    allowed_roots = allowed_import_roots(root_path)
     violations: list[Violation] = []
-    violations.extend(_check_script_file(button_path / "script.py", unit_path))
+    violations.extend(_check_script_file(button_path / "script.py", unit_path,
+                                         allowed_roots))
     violations.extend(_check_bundle_yaml(button_path, unit_path))
     if not (button_path / "README.md").is_file():
         violations.append(_violation("MM006", unit_path))
@@ -376,14 +567,20 @@ def check_pushbutton(button_dir, root) -> list[Violation]:
     return violations
 
 
-def check_script(script_path) -> list[Violation]:
-    """Режим «сырого скрипта»: только правила уровня файла MM000–MM004.
+def check_script(script_path, root=None) -> list[Violation]:
+    """Режим «сырого скрипта»: правила уровня файла и AST-правила.
 
+    Применяются MM000–MM004 и MM008–MM012, MM014 — полный AST-анализ
+    доступен ДО скаффолда кнопки (приёмка ``/mm-adopt-script``).
     Структурные правила (MM005–MM007, MM013) не применяются — у одиночного
     .py нет папки кнопки, bundle.yaml и layout.
+
+    root — корень репозитория для first-party белого списка MM008;
+    None — сырой скрипт вне репо (без first-party составляющей).
     """
     path = Path(script_path)
-    return _check_script_file(path, path.as_posix())
+    return _check_script_file(path, path.as_posix(),
+                              allowed_import_roots(root))
 
 
 def check_layouts(root) -> list[Violation]:
@@ -487,8 +684,8 @@ def write_baseline(violations, path) -> None:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="check_convention.py",
-        description=("Чекер конвенции MM LAB: структурные правила "
-                     "MM000–MM007, MM013 для pyRevit-кнопок."),
+        description=("Чекер конвенции MM LAB: правила MM000–MM014 "
+                     "для pyRevit-кнопок (структурные и AST)."),
     )
     parser.add_argument(
         "paths", nargs="*", metavar="PATH",
@@ -577,7 +774,7 @@ def main(argv=None) -> int:
         violations.extend(check_pushbutton(button_dir, root))
         checked += 1
     for script_path in scripts:
-        script_violations = check_script(script_path)
+        script_violations = check_script(script_path, root)
         rel = _rel_posix(script_path, root)
         for violation in script_violations:
             violation.path = rel
