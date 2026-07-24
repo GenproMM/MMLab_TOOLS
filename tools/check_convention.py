@@ -829,7 +829,13 @@ def main(argv=None) -> int:
         except OSError as exc:
             print(f"Ошибка записи baseline: {exc}", file=sys.stderr)
             return 2
-        if not args.json:
+        if args.json:
+            # Контракт --json: ровно один JSON-объект в stdout — и в
+            # режиме записи baseline тоже (пустой stdout запрещён).
+            print(json.dumps({"baseline_written": str(args.write_baseline),
+                              "violations": len(violations)},
+                             ensure_ascii=False))
+        else:
             print(f"Baseline записан: {args.write_baseline} "
                   f"(нарушений: {len(violations)})")
         return 0
