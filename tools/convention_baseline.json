@@ -41,11 +41,6 @@
       "MM010",
       "MM013"
     ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/.vs/Высота этажа.pushbutton": [
-      "MM000",
-      "MM005",
-      "MM006"
-    ],
     "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Кривые панели (Импост).pushbutton": [
       "MM001",
       "MM002",
@@ -54,22 +49,12 @@
       "MM006",
       "MM013"
     ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Кривые панели (Импост).pushbutton/.vs/Высота этажа.pushbutton": [
-      "MM000",
-      "MM005",
-      "MM006"
-    ],
     "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Кривые панели.pushbutton": [
       "MM001",
       "MM002",
       "MM004",
       "MM010",
       "MM013"
-    ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Кривые панели.pushbutton/.vs/Высота этажа.pushbutton": [
-      "MM000",
-      "MM005",
-      "MM006"
     ],
     "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton": [
       "MM011",
@@ -84,11 +69,6 @@
       "MM006",
       "MM012",
       "MM013"
-    ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Проверка зон.pushbutton/.vs/Высота этажа.pushbutton": [
-      "MM000",
-      "MM005",
-      "MM006"
     ],
     "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton": [
       "MM014"

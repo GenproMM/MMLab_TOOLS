@@ -623,6 +623,9 @@ def iter_pushbuttons(root) -> list[Path]:
     """Все папки ``*.pushbutton`` в ``<root>/MM LAB.extension/MM Lab.tab``.
 
     Пути за пределами root (симлинки и т.п.) отбрасываются (гейт V5).
+    Кандидаты, вложенные в мусорные каталоги (``.vs/``, ``__pycache__/``)
+    или в другую папку ``*.pushbutton``, кнопками не считаются: это
+    артефакты редакторов (сам мусор ловит MM013 на родительской кнопке).
     """
     root_path = Path(root).resolve()
     tab_dir = root_path / EXTENSION_DIR_NAME / TAB_DIR_NAME
@@ -631,6 +634,10 @@ def iter_pushbuttons(root) -> list[Path]:
     buttons: list[Path] = []
     for candidate in sorted(tab_dir.rglob("*" + PUSHBUTTON_SUFFIX)):
         if not candidate.is_dir():
+            continue
+        rel_parts = candidate.relative_to(tab_dir).parts[:-1]
+        if any(part in JUNK_DIR_NAMES or part.endswith(PUSHBUTTON_SUFFIX)
+               for part in rel_parts):
             continue
         resolved = candidate.resolve()
         try:
