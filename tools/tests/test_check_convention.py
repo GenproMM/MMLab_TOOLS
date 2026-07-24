@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Тесты структурных правил чекера конвенции MM LAB (план 03-01).
+"""Тесты чекера конвенции MM LAB (планы 03-01 и 03-03).
 
-Исполняемая спецификация tools/check_convention.py: правила MM000–MM007,
-MM013, режим сырого скрипта, exit-коды CLI, --json, --strict, --baseline
-и --write-baseline.
+Исполняемая спецификация tools/check_convention.py: структурные правила
+MM000–MM007, MM013 (план 03-01), AST-правила MM008–MM012, MM014
+(план 03-03), режим сырого скрипта, exit-коды CLI, --json, --strict,
+--baseline и --write-baseline.
 
 Запуск:
     py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q
@@ -11,12 +12,16 @@ MM013, режим сырого скрипта, exit-коды CLI, --json, --stri
 Фикстуры (кириллица и пробелы в путях — нарочно, чекер обязан их переваривать):
     fixtures/repo_ok/  — эталонная кнопка, все правила проходят;
     fixtures/repo_bad/ — кнопка-нарушитель (BOM, нет шапки/README/bundle.yaml,
-                         не в layout) + орфаны layout «Призрак» и «Нет папки».
+                         не в layout, сторонний импорт, wildcard,
+                         LookupParameter-литерал, голый except, pyrevit.forms,
+                         legacy-бутстрап EXTENSION_ROOT) + орфаны layout
+                         «Призрак» и «Нет папки».
 
 Мусор для MM013 (__pycache__/, *.pyc, *.csv) в фикстуры НЕ коммитится
 (.gitignore не даст) — тесты создают его во временных копиях кнопки.
 """
 
+import ast
 import contextlib
 import io
 import json
@@ -85,6 +90,15 @@ def make_junk(button_dir):
     pycache.mkdir()
     (pycache / "cache.pyc").write_bytes(b"\x00")
     (button_dir / "отчёт.csv").write_text("id;name\n", encoding="utf-8")
+
+
+def write_tmp_script(test_case, source):
+    """Пишет одиночный tmp-скрипт (UTF-8 без BOM) и возвращает его Path."""
+    tmp = tempfile.TemporaryDirectory()
+    test_case.addCleanup(tmp.cleanup)
+    path = Path(tmp.name) / "скрипт.py"
+    path.write_text(source, encoding="utf-8")
+    return path
 
 
 class GoodButtonTests(unittest.TestCase):
@@ -210,6 +224,176 @@ class FileLevelTests(unittest.TestCase):
         codes = {v.code for v in violations}
         self.assertIn("MM001", codes)
         self.assertFalse(codes & {"MM005", "MM006", "MM007", "MM013"})
+
+
+class AstRuleTests(unittest.TestCase):
+    """AST-правила MM008–MM012 и MM014 (план 03-03)."""
+
+    def check_source(self, source, root=None):
+        """check_script на tmp-скрипте; возвращает список Violation."""
+        path = write_tmp_script(self, source)
+        return check_convention.check_script(path, root)
+
+    def codes_of(self, source, root=None):
+        """Множество кодов нарушений check_script на tmp-скрипте."""
+        return {v.code for v in self.check_source(source, root)}
+
+    # --- MM008: белый список импортов -----------------------------------
+
+    def test_mm008_third_party_import(self):
+        # Прямой контракт check_ast_rules/allowed_import_roots.
+        tree = ast.parse("import requests\n")
+        roots = check_convention.allowed_import_roots(None)
+        found = [v for v in check_convention.check_ast_rules(tree, roots)
+                 if v.code == "MM008"]
+        self.assertTrue(found, "ожидалось нарушение MM008")
+        self.assertEqual(found[0].severity, "error")
+        self.assertIn("requests", found[0].message)
+
+    def test_mm008_allows_host_and_stdlib(self):
+        source = (
+            "import clr\n"
+            "import System\n"
+            "from Autodesk.Revit.DB import Transaction\n"
+            "from pyrevit import script\n"
+            "import os\n"
+        )
+        self.assertNotIn("MM008", self.codes_of(source))
+
+    def test_mm008_allows_first_party_lib(self):
+        # tmp-репо: first-party модуль в MM LAB.extension/lib разрешён.
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        root = Path(tmp.name)
+        lib_dir = root / "MM LAB.extension" / "lib"
+        lib_dir.mkdir(parents=True)
+        (lib_dir / "my_helpers.py").write_text("VALUE = 1\n", encoding="utf-8")
+        self.assertIn("my_helpers",
+                      check_convention.allowed_import_roots(root))
+        script_path = root / "скрипт.py"
+        script_path.write_text("import my_helpers\n", encoding="utf-8")
+        violations = check_convention.check_script(script_path, root)
+        self.assertNotIn("MM008", {v.code for v in violations})
+
+    # --- MM009: wildcard-импорт ------------------------------------------
+
+    def test_mm009_wildcard(self):
+        violations = self.check_source("from Autodesk.Revit.DB import *\n")
+        codes = {v.code for v in violations}
+        self.assertIn("MM009", codes)
+        # Autodesk — в белом списке: wildcard не должен давать ещё и MM008.
+        self.assertNotIn("MM008", codes)
+        for violation in violations:
+            if violation.code == "MM009":
+                self.assertEqual(violation.severity, "error")
+
+    # --- MM010: LookupParameter со строковым литералом --------------------
+
+    def test_mm010_lookup_literal(self):
+        source = (
+            "def fill(element):\n"
+            "    return element.LookupParameter(\"GP_23_Назначение\")\n"
+        )
+        found = [v for v in self.check_source(source) if v.code == "MM010"]
+        self.assertTrue(found, "ожидалось нарушение MM010")
+        self.assertEqual(found[0].severity, "warning")
+        self.assertIn("revit_compat", found[0].message)
+
+    # --- MM011: голый except ----------------------------------------------
+
+    def test_mm011_bare_except(self):
+        source = (
+            "try:\n"
+            "    value = 1\n"
+            "except:\n"
+            "    pass\n"
+        )
+        found = [v for v in self.check_source(source) if v.code == "MM011"]
+        self.assertTrue(found, "ожидалось нарушение MM011")
+        self.assertEqual(found[0].severity, "warning")
+
+    # --- MM012: pyrevit.forms под CPython3 ---------------------------------
+
+    def test_mm012_pyrevit_forms(self):
+        for source in ("from pyrevit import forms\n",
+                       "import pyrevit.forms\n"):
+            with self.subTest(source=source.strip()):
+                found = [v for v in self.check_source(source)
+                         if v.code == "MM012"]
+                self.assertTrue(found, "ожидалось нарушение MM012")
+                self.assertEqual(found[0].severity, "warning")
+
+    # --- MM014: неканонический lib-бутстрап --------------------------------
+
+    def test_mm014_extension_root_name(self):
+        source = (
+            "import os\n"
+            "EXTENSION_ROOT = os.path.abspath(os.path.dirname(__file__))\n"
+        )
+        found = [v for v in self.check_source(source) if v.code == "MM014"]
+        self.assertTrue(found, "ожидалось нарушение MM014")
+        self.assertEqual(found[0].severity, "warning")
+
+    def test_mm014_four_parent_hops(self):
+        source = (
+            "import os\n"
+            "repo_root = os.path.join(\n"
+            "    os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\")\n"
+        )
+        self.assertIn("MM014", self.codes_of(source))
+
+    def test_mm014_noncanonical_syspath(self):
+        append_source = (
+            "import os\n"
+            "import sys\n"
+            "LIB_DIR = os.path.dirname(__file__)\n"
+            "sys.path.append(LIB_DIR)\n"
+        )
+        insert_source = (
+            "import os\n"
+            "import sys\n"
+            "LIB_DIR = os.path.dirname(__file__)\n"
+            "sys.path.insert(0, LIB_DIR)\n"
+        )
+        for source in (append_source, insert_source):
+            with self.subTest(call=source.splitlines()[-1]):
+                self.assertIn("MM014", self.codes_of(source))
+
+    def test_mm014_canonical_bootstrap_clean(self):
+        # Канонический блок D-15 дословно — единственная чистая форма.
+        source = (
+            "import os\n"
+            "import sys\n"
+            "\n"
+            "_SCRIPT_DIR = os.path.dirname(__file__)\n"
+            "# pushbutton -> panel -> tab -> MM LAB.extension\n"
+            "_EXTENSION_DIR = os.path.normpath("
+            "os.path.join(_SCRIPT_DIR, \"..\", \"..\", \"..\"))\n"
+            "_LIB_DIR = os.path.join(_EXTENSION_DIR, \"lib\")\n"
+            "if os.path.isdir(_LIB_DIR) and _LIB_DIR not in sys.path:\n"
+            "    sys.path.insert(0, _LIB_DIR)\n"
+        )
+        self.assertNotIn("MM014", self.codes_of(source))
+
+    def test_mm014_on_bad_fixture(self):
+        violations = check_convention.check_pushbutton(BAD_BUTTON, REPO_BAD)
+        self.assertIn("MM014", {v.code for v in violations})
+
+    # --- интеграция и гарды -------------------------------------------------
+
+    def test_raw_script_ast_rules(self):
+        # AST-правила работают в режиме сырого .py (приёмка до скаффолда).
+        path = write_tmp_script(self, "import requests\n")
+        violations = check_convention.check_script(path)
+        self.assertIn("MM008", {v.code for v in violations})
+
+    def test_good_button_still_clean(self):
+        violations = check_convention.check_pushbutton(GOOD_BUTTON, REPO_OK)
+        self.assertEqual(violations, [])
+
+    def test_bad_fixture_bom_preserved(self):
+        raw = (BAD_BUTTON / "script.py").read_bytes()
+        self.assertEqual(raw[:3], b"\xef\xbb\xbf")
 
 
 class CliTests(unittest.TestCase):
