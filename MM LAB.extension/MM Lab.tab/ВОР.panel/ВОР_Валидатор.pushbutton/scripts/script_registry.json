@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "version": 1
+  }, 
+  "ids": {
+    "vor_a3f2c891": {
+      "path": "G:\\Общие диски\\10_BIM_LAB\\7_Personal\\prishchep\\MMLab_TOOLS\\MM LAB.extension\\MM Lab.tab\\ВОР.panel\\ВОР_Валидатор.pushbutton\\scripts\\Заполненность GP_01_Зона\\Заполненность GP_01_Зона.py", 
+      "name": "Заполненность GP_01_Зона", 
+      "display_name": "Заполненность GP_01_Зона"
+    }, 
+    "vor_c5e8d4a2": {
+      "path": "G:\\Общие диски\\10_BIM_LAB\\7_Personal\\prishchep\\MMLab_TOOLS\\MM LAB.extension\\MM Lab.tab\\ВОР.panel\\ВОР_Валидатор.pushbutton\\scripts\\Заполненность GP_01_Коды\\Заполненность GP_01_Коды.py", 
+      "name": "Заполненность GP_01_Коды", 
+      "display_name": "Заполненность GP_01_Коды"
+    }, 
+    "vor_8c4f2a1e": {
+      "path": "G:\\Общие диски\\10_BIM_LAB\\7_Personal\\prishchep\\MMLab_TOOLS\\MM LAB.extension\\MM Lab.tab\\ВОР.panel\\ВОР_Валидатор.pushbutton\\scripts\\Загрузка параметров GP_01\\Загрузка параметров GP_01.py", 
+      "name": "Загрузка параметров GP_01", 
+      "display_name": "Загрузка параметров GP_01"
+    }
+  }
+}

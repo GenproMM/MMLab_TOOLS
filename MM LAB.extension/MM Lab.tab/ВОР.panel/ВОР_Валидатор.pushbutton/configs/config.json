@@ -1,0 +1,71 @@
+{
+  "rp_configs": {
+    "АР|Указать наименование проекта": {
+      "built_in_checks": [], 
+      "custom_scripts": [
+        {
+          "path": "G:\\Общие диски\\10_BIM_LAB\\7_Personal\\prishchep\\MMLab_TOOLS\\MM LAB.extension\\MM Lab.tab\\АРХИТЕКТУРА.panel\\ВОР_Валидатор.pushbutton\\scripts\\test_increment_comments.py", 
+          "name": "test_increment_comments"
+        }
+      ]
+    }, 
+    "КР|Ликино": {
+      "built_in_checks": [
+        "param_2", 
+        "param_4"
+      ], 
+      "custom_scripts": []
+    }, 
+    "АР|Ликино": {
+      "custom_scripts": [
+        {
+          "enabled": true, 
+          "name": "Тестовый скрипт — копия", 
+          "path": "G:\\Общие диски\\10_BIM_LAB\\7_Personal\\prishchep\\MMLab_TOOLS\\MM LAB.extension\\MM Lab.tab\\АРХИТЕКТУРА.panel\\ВОР_Валидатор.pushbutton\\scripts\\Тестовый скрипт — копия.py"
+        }, 
+        {
+          "enabled": false, 
+          "name": "Тестовый скрипт", 
+          "path": "G:\\Общие диски\\10_BIM_LAB\\7_Personal\\prishchep\\MMLab_TOOLS\\MM LAB.extension\\MM Lab.tab\\АРХИТЕКТУРА.panel\\ВОР_Валидатор.pushbutton\\scripts\\Тестовый скрипт.py"
+        }
+      ]
+    }, 
+    "АР|Зорге": {
+      "custom_scripts": [
+        {
+          "path": "G:\\Общие диски\\10_BIM_LAB\\7_Personal\\prishchep\\MMLab_TOOLS\\MM LAB.extension\\MM Lab.tab\\АРХИТЕКТУРА.panel\\ВОР_Валидатор.pushbutton\\scripts\\Тестовый скрипт.py", 
+          "name": "Тестовый скрипт", 
+          "enabled": true
+        }
+      ]
+    }
+  }, 
+  "sections": [
+    {
+      "visible": true, 
+      "name": "АР"
+    }, 
+    {
+      "visible": true, 
+      "name": "КР"
+    }, 
+    {
+      "visible": true, 
+      "name": "ОВ"
+    }
+  ], 
+  "projects": [
+    {
+      "visible": true, 
+      "name": "Ликино"
+    }, 
+    {
+      "visible": true, 
+      "name": "Зорге"
+    }, 
+    {
+      "visible": true, 
+      "name": "3 Вулкана"
+    }
+  ]
+}
