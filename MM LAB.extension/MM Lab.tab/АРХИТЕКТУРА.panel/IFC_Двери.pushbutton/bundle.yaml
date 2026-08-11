@@ -1,7 +1,0 @@
-title:
-  en_us: "IFC\nDoors"
-  ru: "IFC\nДвери"
-tooltip:
-  en_us: "Classifies doors by MSSK and fills GP_01 code/name shared parameters"
-  ru: "Классифицирует двери по МССК и заполняет общие параметры GP_01 (код и имя)"
-author: "GENPRO LAB"

@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebSearch",
-      "Bash(mkdir -p \"G:/Общие диски/10_BIM_LAB/7_Personal/prishchep/MMLab_TOOLS/MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_Валидатор.pushbutton/.claude/skills/vor-script-creator/references\")",
-      "Bash(mkdir -p \"G:/Общие диски/10_BIM_LAB/7_Personal/prishchep/MMLab_TOOLS/MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_Валидатор.pushbutton/.claude/skills/vor-script-creator/examples\")"
-    ]
-  }
-}

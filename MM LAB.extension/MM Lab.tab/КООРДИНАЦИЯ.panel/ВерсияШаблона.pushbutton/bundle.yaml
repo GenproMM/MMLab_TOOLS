@@ -1,9 +1,0 @@
-title:
-  en_us: "Template\nVersion"
-  ru: "Версия\nШаблона"
-tooltip:
-  en_us: "Reads the latest sheet revision date and writes version to GP_01_ВерсияШаблона."
-  ru: "Читает последнюю дату изменения листов и записывает версию в GP_01_ВерсияШаблона."
-author:
-  en_us: MM LAB
-  ru: MM LAB

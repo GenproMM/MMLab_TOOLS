@@ -1,13 +1,19 @@
 {
-    "type": "extension",
-    "name": "MM LAB",
-    "description": "MM LAB Tools for Revit",
-    "author": "MM LAB",
-    "author_profile": "",
-    "url": "",
-    "website": "",
-    "image": "",
-    "dependencies": [],
-    "templates": [],
-    "rockets": []
+    "extensions": [
+        {
+            "builtin": "False",
+            "enable": "True",
+            "type": "extension",
+            "rocket_mode_compatible": "False",
+            "name": "MM_LAB",
+            "description": "MM LAB Tools for Revit",
+            "author": "Evgenii Ermolenko",
+            "author_profile": "https://github.com/Erarchitech",
+            "url": "https://github.com/gtalarico/pyrevitplus.git",
+            "website": "https://github.com/gtalarico/pyrevitplus",
+            "image": "",
+            "dependencies": []
+        }
+        
+    ]
 }
