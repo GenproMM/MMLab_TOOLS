@@ -1,0 +1,8 @@
+title:
+  en_us: "Export\nPSO"
+  ru: "Экспорт\nПСО"
+tooltip:
+  en_us: "Export room specification (PSO) to Excel with grouping and merging cells by apartments"
+  ru: "Экспорт спецификации помещений (ПСО) в Excel с группировкой и объединением ячеек по квартирам"
+author: "MM LAB"
+highlight: new
