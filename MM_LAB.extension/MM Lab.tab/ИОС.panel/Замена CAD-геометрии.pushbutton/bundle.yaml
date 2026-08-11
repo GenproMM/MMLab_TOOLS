@@ -1,6 +1,6 @@
 title:
   en_us: "DWG changer"
-  ru: "Высота\nэтажа"  "Замена \nCAD-геометрии"
+  ru: "Замена \nCAD-геометрии"
 tooltip:
   en_us: "Change dwg to boxes"
   ru: "Меняет тяжелую двг геометрию на простые облегченные кубики"
