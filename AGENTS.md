@@ -268,7 +268,7 @@ Exit-коды: 0 — чисто, 1 — есть нарушения (в `--strict
 | `/mm-update-repo` | безопасное обновление репозитория (fetch/pull, проверка чистоты дерева) | `agents/commands/mm-update-repo.md` |
 | `/mm-doctor` | self-check: версии Revit vs поддерживаемые, vendored lib, полнота кнопок | `agents/commands/mm-doctor.md` |
 | `/mm-new-compat` | добавить ветку новой версии Revit в `revit_compat.py` | `agents/commands/mm-new-compat.md` |
-| `/mm-releasemap-download` | скачать Карту релизов: ресинк `.planning/*` из CSV-экспорта Google-таблицы | `agents/commands/mm-releasemap-download.md` |
+| `/mm-releasemap-download` | скачать Карту релизов: CSV-экспорт из `%USERPROFILE%\Downloads` → ресинк `.planning/*` | `agents/commands/mm-releasemap-download.md` |
 
 Фраза пользователя «сохрани сессию» = выполнить процедуру `/mm-save-session`.
 Фраза «Синхронизируй gsd» / «скачай карту релизов» = выполнить процедуру
