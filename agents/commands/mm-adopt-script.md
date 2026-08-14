@@ -45,7 +45,7 @@ quick task GSD → пофайловый коммит. Правила конве�
    файла; согласуй с пользователем. Имя папки кнопки — `<Имя>.pushbutton`.
 
 5. **Адаптация (D-08, D-11).** Подготовь папку
-   `MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/` по образцу
+   `MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/` по образцу
    `templates/НоваяКнопка.pushbutton`:
    - `script.py` — перенеси логику исходника, приведя к конвенции:
      - шапка MM001–MM004: строка 1 `#! python3`, строка 2 `# -*- coding: utf-8 -*-`,
@@ -55,7 +55,7 @@ quick task GSD → пофайловый коммит. Правила конве�
      - канонический lib-бутстрап — дословно блок `_SCRIPT_DIR`/`_EXTENSION_DIR`/`_LIB_DIR`
        из шаблона (MM014, D-15);
      - импорты только по белому списку MM008 (stdlib, `clr`/`System`/`Autodesk`/
-       `pyrevit`/`Microsoft`, first-party `MM LAB.extension/lib`, vendored
+       `pyrevit`/`Microsoft`, first-party `MM_LAB.extension/lib`, vendored
        `openpyxl`/`et_xmlfile`); wildcard-импорты убрать (MM009);
      - `pyrevit.forms` не работает под CPython (MM012) — заменить на `TaskDialog`
        или WinForms-паттерны репозитория;
@@ -75,7 +75,7 @@ quick task GSD → пофайловый коммит. Правила конве�
 6. **Гейт-проверка чекером.** Прогоняй до чистого результата (exit 0):
 
    ```bash
-   py -3 tools/check_convention.py "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton" --strict
+   py -3 tools/check_convention.py "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton" --strict
    ```
 
    В `--strict` baseline игнорируется, warning считаются error (гейт приёмки D-06/D-08).
@@ -95,7 +95,7 @@ quick task GSD → пофайловый коммит. Правила конве�
 
 8. **Регистрация (D-11).** Только после одобрения на шаге 7:
    - допиши запись `- <Имя>` (имя папки БЕЗ суффикса `.pushbutton`) в `layout:`
-     файла `MM LAB.extension/MM Lab.tab/<Панель>.panel/bundle.yaml`;
+     файла `MM_LAB.extension/MM Lab.tab/<Панель>.panel/bundle.yaml`;
      место в списке согласуй с пользователем или добавь в конец;
    - если исходный скрипт уже лежал кнопкой в этом репозитории и его запись есть
      в `tools/convention_baseline.json` (ключ `units` для legacy-кнопок либо
@@ -125,10 +125,10 @@ quick task GSD → пофайловый коммит. Правила конве�
 
     ```bash
     git -c core.quotepath=false status --porcelain
-    git add "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/script.py"
-    git add "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/bundle.yaml"
-    git add "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/README.md"
-    git add "MM LAB.extension/MM Lab.tab/<Панель>.panel/bundle.yaml"
+    git add "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/script.py"
+    git add "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/bundle.yaml"
+    git add "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/README.md"
+    git add "MM_LAB.extension/MM Lab.tab/<Панель>.panel/bundle.yaml"
     git add "tools/convention_baseline.json"
     git commit -m "приёмка: кнопка <Имя> адаптирована под конвенцию MM LAB"
     ```

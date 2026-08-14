@@ -22,7 +22,7 @@
 ## Implementation Decisions
 
 ### Locked decisions
-- Shared helper-модуль размещается в MM LAB.extension/lib
+- Shared helper-модуль размещается в MM_LAB.extension/lib
 - script.py кнопок остаются тонкими: orchestration + UI конкретной кнопки
 - Логика Transaction не меняется относительно текущей реализации
 - Silent except не добавляются; существующее поведение ошибок не ухудшается

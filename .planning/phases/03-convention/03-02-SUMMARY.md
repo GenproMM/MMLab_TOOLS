@@ -7,9 +7,9 @@ tags: [pyrevit, revit-api, pythonnet, cpython, compat, ast, unittest]
 # Dependency graph
 requires:
   - phase: 01-helper
-    provides: "паттерн shared-модулей в MM LAB.extension/lib (ios_common_helpers — стиль импортов, element_id_value, обход BIP->имя)"
+    provides: "паттерн shared-модулей в MM_LAB.extension/lib (ios_common_helpers — стиль импортов, element_id_value, обход BIP->имя)"
 provides:
-  - "MM LAB.extension/lib/revit_compat.py — единый compat-модуль Revit API: SUPPORTED_VERSIONS (2020, 2022, 2024) + 13 публичных функций (D-01..D-04)"
+  - "MM_LAB.extension/lib/revit_compat.py — единый compat-модуль Revit API: SUPPORTED_VERSIONS (2020, 2022, 2024) + 13 публичных функций (D-01..D-04)"
   - "Канонический каскад get_parameter из 5 ступеней — консолидация двух существующих обходов репо (третий вариант не создан)"
   - "tools/tests/test_revit_compat_contract.py — ast-контракт публичного API, работает без Revit"
 affects: [03-04 (шаблон кнопки), 03-05 (AGENTS.md), 03-06 (mm-команды), все будущие кнопки]
@@ -24,7 +24,7 @@ tech-stack:
 
 key-files:
   created:
-    - "MM LAB.extension/lib/revit_compat.py"
+    - "MM_LAB.extension/lib/revit_compat.py"
     - "tools/tests/test_revit_compat_contract.py"
   modified: []
 
@@ -47,7 +47,7 @@ coverage:
     requirement: CONV-STD
     verification:
       - kind: other
-        ref: "py -3 -m py_compile \"MM LAB.extension/lib/revit_compat.py\""
+        ref: "py -3 -m py_compile \"MM_LAB.extension/lib/revit_compat.py\""
         status: pass
       - kind: unit
         ref: "tools/tests/test_revit_compat_contract.py#TestRevitCompatContract"
@@ -88,7 +88,7 @@ status: complete
 
 ## Accomplishments
 
-- Создан `MM LAB.extension/lib/revit_compat.py` (452 строки): единственное место версионных ветвлений Revit API в репозитории (D-01..D-04) — скрипты кнопок теперь зовут стабильные хелперы, а не сырой версионный API
+- Создан `MM_LAB.extension/lib/revit_compat.py` (452 строки): единственное место версионных ветвлений Revit API в репозитории (D-01..D-04) — скрипты кнопок теперь зовут стабильные хелперы, а не сырой версионный API
 - Каскад get_parameter консолидировал оба существующих обхода pythonnet (`__overloads__` из «Мокрых зон» и BIP->имя->LookupParameter из ios_common_helpers) — третий вариант в репо не появился
 - `require_supported_version` реализует fail-fast (D-03): TaskDialog со списком поддерживаемых версий + SystemExit; сообщение на русском («Обратись в GENPRO LAB»)
 - Контрактный тест `tools/tests/test_revit_compat_contract.py` (6 тестов) фиксирует шапку, докстринг, SUPPORTED_VERSIONS и все 13 публичных функций через ast — без импорта Revit; полный прогон tools/tests (27 тестов вместе с планом 03-01) зелёный
@@ -97,12 +97,12 @@ status: complete
 
 Each task was committed atomically:
 
-1. **Task 1: Создать MM LAB.extension/lib/revit_compat.py** - `930da43` (feat)
+1. **Task 1: Создать MM_LAB.extension/lib/revit_compat.py** - `930da43` (feat)
 2. **Task 2: Контрактный тест API compat (ast, без Revit)** - `1c72ecb` (feat)
 
 ## Files Created/Modified
 
-- `MM LAB.extension/lib/revit_compat.py` - compat-модуль: SUPPORTED_VERSIONS, get_revit_version, require_supported_version, get_parameter, get_shared_parameter, element_id_value, make_element_id, convert_from_internal, convert_to_internal, create_floor, to_net_list, enum_from_int, iter_count, ensure_vendor_lib; приватные _version_number, _bip_to_lookup_name, _units_map, _unit_object, _BIP_NAME_CACHE
+- `MM_LAB.extension/lib/revit_compat.py` - compat-модуль: SUPPORTED_VERSIONS, get_revit_version, require_supported_version, get_parameter, get_shared_parameter, element_id_value, make_element_id, convert_from_internal, convert_to_internal, create_floor, to_net_list, enum_from_int, iter_count, ensure_vendor_lib; приватные _version_number, _bip_to_lookup_name, _units_map, _unit_object, _BIP_NAME_CACHE
 - `tools/tests/test_revit_compat_contract.py` - PUBLIC_API (13 имён) + TestRevitCompatContract: test_header, test_docstring, test_supported_versions, test_public_api, test_no_bare_except, test_compiles
 
 ## Decisions Made
@@ -120,7 +120,7 @@ Each task was committed atomically:
 - **Found during:** Task 1 (создание revit_compat.py)
 - **Issue:** План задаёт извлечение версии только через `.Application.VersionNumber` / `.VersionNumber`, но у `pyrevit.HOST_APP` нет ни того, ни другого атрибута — третья ступень каскада никогда не вернула бы версию
 - **Fix:** В `_version_number` добавлена третья попытка `int(obj.version)` (свойство _HostApplication), все попытки в try/except Exception
-- **Files modified:** MM LAB.extension/lib/revit_compat.py
+- **Files modified:** MM_LAB.extension/lib/revit_compat.py
 - **Verification:** py_compile + контрактный тест зелёные; логика каскада покрыта докстрингом
 - **Committed in:** 930da43 (Task 1 commit)
 
@@ -128,7 +128,7 @@ Each task was committed atomically:
 - **Found during:** Task 1 (создание revit_compat.py)
 - **Issue:** План не оговаривал поведение create_floor при пустом curve_loops и convert_* при неизвестном unit_key — без защиты падение было бы невнятным (NullReference/KeyError внутри API)
 - **Fix:** `create_floor` бросает ValueError «пустой список контуров»; `_unit_object` бросает ValueError с перечнем доступных ключей
-- **Files modified:** MM LAB.extension/lib/revit_compat.py
+- **Files modified:** MM_LAB.extension/lib/revit_compat.py
 - **Verification:** py_compile + контрактный тест зелёные
 - **Committed in:** 930da43 (Task 1 commit)
 
@@ -153,11 +153,11 @@ None - no external service configuration required.
 
 ## Self-Check: PASSED
 
-- FOUND: MM LAB.extension/lib/revit_compat.py
+- FOUND: MM_LAB.extension/lib/revit_compat.py
 - FOUND: tools/tests/test_revit_compat_contract.py
 - FOUND: commit 930da43
 - FOUND: commit 1c72ecb
-- PASS: `py -3 -m py_compile "MM LAB.extension/lib/revit_compat.py"` → exit 0
+- PASS: `py -3 -m py_compile "MM_LAB.extension/lib/revit_compat.py"` → exit 0
 - PASS: `py -3 -m unittest discover -s tools/tests -p "test_revit_compat*.py" -q` → exit 0 (6 тестов)
 
 ---

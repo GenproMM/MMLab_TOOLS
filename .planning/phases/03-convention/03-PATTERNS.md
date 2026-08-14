@@ -13,19 +13,19 @@
 | `GEMINI.md`, `.gemini/commands/mm-*.toml`, `.kilo/commands/mm-*.md`, `.kilocode/rules/00-mmlab.md` | config (адаптеры агентов) | — | нет в репо — образцы в RESEARCH §Code Examples | no-analog |
 | `agents/commands/mm-*.md` (7 канонических процедур) | doc (процедура команды) | — | `.claude/skills/gsd-quick/SKILL.md` (структура), `.claude/skills/graphify/SKILL.md` (Usage-блок) | role-match |
 | `.claude/commands/mm-*.md` (7 адаптеров) | config (command) | — | `.claude/skills/gsd-quick/SKILL.md` (frontmatter) | role-match |
-| `MM LAB.extension/lib/revit_compat.py` | utility (shared lib) | request-response (API-обёртки) | `MM LAB.extension/lib/ios_common_helpers.py` | exact |
+| `MM_LAB.extension/lib/revit_compat.py` | utility (shared lib) | request-response (API-обёртки) | `MM_LAB.extension/lib/ios_common_helpers.py` | exact |
 | `tools/check_convention.py` | utility (CLI-чекер) | file-I/O + transform (AST) | нет CLI-инструментов в репо; ядро — RESEARCH §Code Examples (AST) | no-analog |
 | `tools/convention_baseline.json` | config (data) | file-I/O | нет — плоский JSON, схему задаёт чекер | no-analog |
 | `tools/tests/*` + fixtures | test | batch | нет тестов в репо — stdlib `unittest` (RESEARCH §Validation) | no-analog |
 | `templates/НоваяКнопка.pushbutton/script.py` | pushbutton script (шаблон) | request-response (Revit UI) | `Сброс потерь/script.py` (структура main) + `Мокрые зоны/script.py` (шапка) | exact |
 | `templates/НоваяКнопка.pushbutton/bundle.yaml`, `README.md` | config/doc | — | `Мокрые зоны.pushbutton/bundle.yaml` + `README.md` | exact |
-| `MM LAB.extension/MM Lab.tab/bundle.yaml` (правка: убрать орфан `ВОР`, хвостовые пробелы) | config | — | `АРХИТЕКТУРА.panel/bundle.yaml` | exact |
+| `MM_LAB.extension/MM Lab.tab/bundle.yaml` (правка: убрать орфан `ВОР`, хвостовые пробелы) | config | — | `АРХИТЕКТУРА.panel/bundle.yaml` | exact |
 
 ## Pattern Assignments
 
-### `MM LAB.extension/lib/revit_compat.py` (utility, shared lib)
+### `MM_LAB.extension/lib/revit_compat.py` (utility, shared lib)
 
-**Analog:** `MM LAB.extension/lib/ios_common_helpers.py` — единственный полноценный shared-модуль; compat встаёт рядом тем же механизмом (pyRevit авто-добавляет `MM LAB.extension/lib` в sys.path).
+**Analog:** `MM_LAB.extension/lib/ios_common_helpers.py` — единственный полноценный shared-модуль; compat встаёт рядом тем же механизмом (pyRevit авто-добавляет `MM_LAB.extension/lib` в sys.path).
 
 **Шапка + импорты** (`ios_common_helpers.py` строки 1–23):
 ```python
@@ -132,13 +132,13 @@ __doc__ = ("Однострочное описание для tooltip.")
 
 **lib-бутстрап — канонизировать по D-15.** В репо два конфликтующих варианта:
 - `Мокрые зоны/script.py` строки 33–37: 4×`..` → корень РЕПО → vendored `lib/`, `insert(0)` (имя `EXTENSION_ROOT` лжёт);
-- `Сброс потерь/script.py` строки 12–16: 3×`dirname` → `MM LAB.extension` → first-party `lib/`, `append`.
+- `Сброс потерь/script.py` строки 12–16: 3×`dirname` → `MM_LAB.extension` → first-party `lib/`, `append`.
 
 Канон для шаблона (форма «Мокрых зон», путь «Сброса потерь», честные имена — RESEARCH §Pattern 4):
 ```python
 import os, sys
 _SCRIPT_DIR = os.path.dirname(__file__)
-# pushbutton → panel → tab → MM LAB.extension
+# pushbutton → panel → tab → MM_LAB.extension
 _EXTENSION_DIR = os.path.normpath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
 _LIB_DIR = os.path.join(_EXTENSION_DIR, "lib")
 if os.path.isdir(_LIB_DIR) and _LIB_DIR not in sys.path:
@@ -198,7 +198,7 @@ author: "GENPRO LAB"
 
 ### Правки `bundle.yaml` (tab + panel) и правило регистрации для `/mm-adopt-script`
 
-**Analog:** `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`:
+**Analog:** `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`:
 ```yaml
 layout:
   - Мокрые зоны
@@ -268,7 +268,7 @@ status: complete
 **Source:** `Сброс потерь/script.py` строки 53–82 (см. выше). **Apply to:** шаблон script.py, раздел «Транзакции» в AGENTS.md.
 
 ### UI-alert
-**Source:** `MM LAB.extension/lib/revit_ui_helpers.py` строки 12–16:
+**Source:** `MM_LAB.extension/lib/revit_ui_helpers.py` строки 12–16:
 ```python
 def alert(message, title=u"Сообщение"):
     dialog = TaskDialog(title)
@@ -279,7 +279,7 @@ def alert(message, title=u"Сообщение"):
 **Apply to:** шаблон (импорт из lib), fail-fast сообщение compat.
 
 ### Стиль импортов lib-модулей
-**Source:** `ios_common_helpers.py` строки 1–23. **Apply to:** `revit_compat.py`, шаблон, правило MM008 (белый список: stdlib + `clr`,`System`,`Autodesk`,`pyrevit` + `MM LAB.extension/lib/*.py` + vendored `openpyxl`,`et_xmlfile`).
+**Source:** `ios_common_helpers.py` строки 1–23. **Apply to:** `revit_compat.py`, шаблон, правило MM008 (белый список: stdlib + `clr`,`System`,`Autodesk`,`pyrevit` + `MM_LAB.extension/lib/*.py` + vendored `openpyxl`,`et_xmlfile`).
 
 ## No Analog Found
 
@@ -291,6 +291,6 @@ def alert(message, title=u"Сообщение"):
 
 ## Metadata
 
-**Analog search scope:** `MM LAB.extension/lib/`, `MM LAB.extension/MM Lab.tab/**` (панели АРХИТЕКТУРА/ИОС), `.claude/skills/`, `.planning/quick/`, корневые `CLAUDE.md`/`bundle.yaml`
+**Analog search scope:** `MM_LAB.extension/lib/`, `MM_LAB.extension/MM Lab.tab/**` (панели АРХИТЕКТУРА/ИОС), `.claude/skills/`, `.planning/quick/`, корневые `CLAUDE.md`/`bundle.yaml`
 **Files scanned:** ~15 прочитано напрямую (lib-модули, 2 эталонных script.py, bundle.yaml×3, README, SKILL.md×2, quick-task PLAN)
 **Pattern extraction date:** 2026-07-24

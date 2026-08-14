@@ -7,7 +7,7 @@
 **Overall:** Plugin command-pack architecture (pyRevit extension tree) plus repository-local workflow tooling (Node.js CLI for GSD planning operations).
 
 **Key Characteristics:**
-- UI composition is declarative via `bundle.yaml` files under `MM LAB.extension/MM Lab.tab/...`.
+- UI composition is declarative via `bundle.yaml` files under `MM_LAB.extension/MM Lab.tab/...`.
 - Business logic is command-local and script-centric (`script.py` per `*.pushbutton` directory).
 - Workflow orchestration is centralized in `.github/get-shit-done/bin/gsd-tools.cjs` with feature modules in `.github/get-shit-done/bin/lib/*.cjs`.
 
@@ -15,21 +15,21 @@
 
 **Extension Metadata Layer:**
 - Purpose: Register extension identity and top-level tab/panel layout.
-- Location: `extension.json`, `MM LAB.extension/MM Lab.tab/bundle.yaml`, `MM LAB.extension/MM Lab.tab/*/bundle.yaml`
+- Location: `extension.json`, `MM_LAB.extension/MM Lab.tab/bundle.yaml`, `MM_LAB.extension/MM Lab.tab/*/bundle.yaml`
 - Contains: Extension manifest (`type`, `name`) and panel ordering (`layout`).
 - Depends on: pyRevit extension discovery conventions.
 - Used by: Revit/pyRevit runtime when loading the extension UI.
 
 **Command UI Metadata Layer:**
 - Purpose: Define each clickable command and user-facing labels/tooltips.
-- Location: `MM LAB.extension/MM Lab.tab/*/*.pushbutton/bundle.yaml`
+- Location: `MM_LAB.extension/MM Lab.tab/*/*.pushbutton/bundle.yaml`
 - Contains: Command title/tooltip metadata.
 - Depends on: Panel-level `layout` references (for discoverability order).
 - Used by: pyRevit ribbon rendering.
 
 **Command Execution Layer (Python):**
 - Purpose: Implement domain behavior for architecture/MEP/coordination operations.
-- Location: `MM LAB.extension/MM Lab.tab/*/*.pushbutton/script.py`
+- Location: `MM_LAB.extension/MM Lab.tab/*/*.pushbutton/script.py`
 - Contains: Revit API calls, element collectors, transactions, dialogs, and command-specific algorithms.
 - Depends on: `Autodesk.Revit.DB`, `Autodesk.Revit.UI`, `pyrevit` modules and `__revit__` context.
 - Used by: Individual pushbutton activation at runtime.
@@ -38,7 +38,7 @@
 - Purpose: Provide Python packages not guaranteed in host environment.
 - Location: `lib/openpyxl/**`, `lib/et_xmlfile/**`
 - Contains: Vendored third-party packages for Excel export flows.
-- Depends on: Script-side `sys.path` injection (example in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`).
+- Depends on: Script-side `sys.path` injection (example in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`).
 - Used by: Commands that need offline packaging-safe dependencies.
 
 **Planning/Automation Layer (Node CLI):**
@@ -73,17 +73,17 @@
 
 **Panel-to-Command Packaging:**
 - Purpose: Keep UI composition and command logic loosely coupled.
-- Examples: `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`, `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`
+- Examples: `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`, `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`
 - Pattern: Metadata (`bundle.yaml`) references command directory; command directory encapsulates code/assets/docs.
 
 **Transaction-Bounded Mutation:**
 - Purpose: Ensure model changes are atomic and rollback-capable.
-- Examples: `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`, `MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`
+- Examples: `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`, `MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`
 - Pattern: `Transaction.Start()` -> parameter updates -> `Commit()` or `RollBack()` on failure.
 
 **Vendor Path Injection for Optional Dependencies:**
 - Purpose: Make scripts self-sufficient in constrained pyRevit runtime.
-- Examples: `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`
+- Examples: `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`
 - Pattern: Compute extension root -> prepend `lib` to `sys.path` -> import vendor package.
 
 ## Entry Points
@@ -94,12 +94,12 @@
 - Responsibilities: Declares extension identity and installation-level metadata.
 
 **UI Tab Definition:**
-- Location: `MM LAB.extension/MM Lab.tab/bundle.yaml`
+- Location: `MM_LAB.extension/MM Lab.tab/bundle.yaml`
 - Triggers: Ribbon tab rendering.
 - Responsibilities: Defines tab title and panel order.
 
 **Per-Command Executable Entrypoints:**
-- Location: `MM LAB.extension/MM Lab.tab/*/*.pushbutton/script.py`
+- Location: `MM_LAB.extension/MM Lab.tab/*/*.pushbutton/script.py`
 - Triggers: User pushbutton click.
 - Responsibilities: Execute one bounded domain operation against active Revit document/family.
 
@@ -113,7 +113,7 @@
 **Strategy:** Defensive command-local handling with user-facing dialogs plus transaction rollback for write paths.
 
 **Patterns:**
-- Guard clauses before write operations (example: family-only checks in `MM LAB.extension/MM Lab.tab/ИОС.panel/Замена CAD-геометрии.pushbutton/script.py`).
+- Guard clauses before write operations (example: family-only checks in `MM_LAB.extension/MM Lab.tab/ИОС.panel/Замена CAD-геометрии.pushbutton/script.py`).
 - `try/except` blocks around API calls with fallback behavior and message reporting.
 - Explicit rollback semantics when mutation fails (`Transaction.RollBack()`).
 

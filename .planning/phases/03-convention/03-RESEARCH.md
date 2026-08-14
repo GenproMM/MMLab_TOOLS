@@ -83,7 +83,7 @@
 
 Аудит репозитория дал критичный входной факт: **из 17 существующих кнопок конвенции соответствуют полностью ~2** (только у 7 есть `#! python3`, причём у 4 из них шебанг испорчен UTF-8 BOM; у 8 нет README; у 4 нет bundle.yaml; свежие `IFC_Двери`/`IFC_Окна` — живой пример «стороннего скрипта», который надо принимать через `/mm-adopt-script`). Значит чекер обязан иметь **baseline/legacy-режим** (список grandfathered-кнопок), иначе он «красный» с первого дня и бесполезен как гейт приёмки.
 
-Вторая ключевая находка: в репо **две папки `lib`** (корневая `lib/` = vendored openpyxl/et_xmlfile; `MM LAB.extension/lib/` = first-party хелперы, автоматически добавляется pyRevit в sys.path) и **три варианта бутстрапа** в скриптах, в двух из которых переменная `EXTENSION_ROOT` на самом деле указывает на корень репозитория. Канонический бутстрап шаблона (D-15) должен явно разводить эти два каталога.
+Вторая ключевая находка: в репо **две папки `lib`** (корневая `lib/` = vendored openpyxl/et_xmlfile; `MM_LAB.extension/lib/` = first-party хелперы, автоматически добавляется pyRevit в sys.path) и **три варианта бутстрапа** в скриптах, в двух из которых переменная `EXTENSION_ROOT` на самом деле указывает на корень репозитория. Канонический бутстрап шаблона (D-15) должен явно разводить эти два каталога.
 
 **Primary recommendation:** AGENTS.md в корне = полный текст конвенции (русский); `CLAUDE.md` → одна строка `@AGENTS.md` + Claude-специфика, `GEMINI.md` → `@AGENTS.md` (memory import), Kilo читает AGENTS.md нативно. Канонические процедуры `mm-*` — по одному markdown-файлу на команду в одном каталоге, тонкие адаптеры в `.claude/commands/`, `.gemini/commands/*.toml`, `.kilo/commands/`. Чекер — stdlib-only (`ast` + `sys.stdlib_module_names`, Python ≥3.10), с `--json`, `--strict` и baseline.
 
@@ -154,7 +154,7 @@ MMLab_TOOLS/
 ├── .gemini/commands/mm-*.toml         # адаптеры Gemini (prompt → канонический файл, {{args}})
 ├── .kilo/commands/mm-*.md             # адаптеры Kilo (то же)
 ├── templates/
-│   └── НоваяКнопка.pushbutton/        # D-12..D-15; ВНЕ MM LAB.extension → pyRevit не грузит
+│   └── НоваяКнопка.pushbutton/        # D-12..D-15; ВНЕ MM_LAB.extension → pyRevit не грузит
 │       ├── script.py                  # рабочий пример: шапка → бутстрап → compat → Transaction → TaskDialog
 │       ├── bundle.yaml                # title/tooltip (ru), author + TODO
 │       ├── README.md                  # каркас по образцу «Мокрых зон»
@@ -163,11 +163,11 @@ MMLab_TOOLS/
 │   ├── check_convention.py            # stdlib-only чекер
 │   ├── convention_baseline.json       # grandfathered-кнопки (legacy-исключения)
 │   └── tests/                         # unittest + fixtures (good_button/, bad_button/)
-└── MM LAB.extension/lib/
+└── MM_LAB.extension/lib/
     └── revit_compat.py                # D-01..D-04
 ```
 
-Имена файлов/папок — the agent's discretion (зафиксированы решениями только префикс `mm-`, `templates/` в корне, compat в `MM LAB.extension/lib`).
+Имена файлов/папок — the agent's discretion (зафиксированы решениями только префикс `mm-`, `templates/` в корне, compat в `MM_LAB.extension/lib`).
 
 ### Pattern 1: Двухуровневая схема «AGENTS.md + тонкие указатели» (D-05)
 
@@ -242,9 +242,9 @@ def iter_count(net_or_py_seq): ...                 # len()-безопасный 
 
 ### Pattern 4: Канонический lib-бутстрап шаблона (D-15)
 
-Сейчас в репо ТРИ варианта, и в двух `EXTENSION_ROOT` фактически указывает на корень репо (4×`..` от pushbutton), а не на `MM LAB.extension`:
-- «Мокрые зоны»: 4×`..` → корень репо → `lib/` (vendored!), `insert(0)`; первопартийный импорт `revit_ui_helpers` при этом работает только потому, что pyRevit сам добавил `MM LAB.extension/lib` в sys.path.
-- «Сброс потерь»: 3×`dirname` → `MM LAB.extension` → `lib/` (first-party), `append`.
+Сейчас в репо ТРИ варианта, и в двух `EXTENSION_ROOT` фактически указывает на корень репо (4×`..` от pushbutton), а не на `MM_LAB.extension`:
+- «Мокрые зоны»: 4×`..` → корень репо → `lib/` (vendored!), `insert(0)`; первопартийный импорт `revit_ui_helpers` при этом работает только потому, что pyRevit сам добавил `MM_LAB.extension/lib` в sys.path.
+- «Сброс потерь»: 3×`dirname` → `MM_LAB.extension` → `lib/` (first-party), `append`.
 - «Экспорт ПСО»: 4×`..` → корень репо → `lib/` (vendored, для openpyxl), `insert(0)`.
 
 **Факт pyRevit:** папка `lib` в корне UI-extension — встроенная фича, добавляется в sys.path всем командам расширения при старте; изменения в `lib` требуют Reload/перезапуска Revit (парсится на старте) [VERIFIED: discourse.pyrevitlabs.io/t/7764 + pyrevit1.readthedocs]. `.lib`-extensions добавляются в sys.path всех расширений.
@@ -253,7 +253,7 @@ def iter_count(net_or_py_seq): ...                 # len()-безопасный 
 ```python
 import os, sys
 _SCRIPT_DIR = os.path.dirname(__file__)
-# pushbutton → panel → tab → MM LAB.extension
+# pushbutton → panel → tab → MM_LAB.extension
 _EXTENSION_DIR = os.path.normpath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
 _LIB_DIR = os.path.join(_EXTENSION_DIR, "lib")            # first-party (revit_compat и др.)
 if os.path.isdir(_LIB_DIR) and _LIB_DIR not in sys.path:
@@ -276,7 +276,7 @@ Vendored-каталог (корневой `lib/` с openpyxl) в шаблон Н
 | MM005 | bundle.yaml существует, есть `title:`/`tooltip:` | error | D-11 |
 | MM006 | README.md существует | error | конвенция |
 | MM007 | кнопка есть в panel `bundle.yaml layout`; все layout-записи имеют папки | error | иначе кнопка не видна на pyRevit ≤5.x; в tab-layout уже есть орфан «ВОР» без панели |
-| MM008 | импорты только из белого списка: stdlib (`sys.stdlib_module_names`) + `clr`,`System`,`Autodesk`,`pyrevit` + модули `MM LAB.extension/lib/*.py` + vendored top-level (`openpyxl`,`et_xmlfile`) | error | «без сторонних импортов, кроме vendored lib» |
+| MM008 | импорты только из белого списка: stdlib (`sys.stdlib_module_names`) + `clr`,`System`,`Autodesk`,`pyrevit` + модули `MM_LAB.extension/lib/*.py` + vendored top-level (`openpyxl`,`et_xmlfile`) | error | «без сторонних импортов, кроме vendored lib» |
 | MM009 | нет `from X import *` | error | IFC_Двери: `from Autodesk.Revit.DB import *` |
 | MM010 | `LookupParameter("строковый литерал")` → предложить `revit_compat.get_parameter`/GUID | warning | D-06 «где применимо»; в lib есть легитимный fallback |
 | MM011 | голый `except:` | warning | рефакторинг silent-except deferred → не error |
@@ -557,7 +557,7 @@ layout:
 | CONV-CHECK | Чекер ловит каждое правило MM001–MM013 на bad-fixture и молчит на good-fixture | unit | `py -3 -m unittest tools.tests.test_check_convention -q` | ❌ Wave 0 |
 | CONV-CHECK | Чекер по всему репо с baseline завершает exit 0 | integration | `py -3 tools/check_convention.py --all --baseline …` | ❌ Wave 0 |
 | CONV-STD | templates/ проходит `--strict` на 100% | integration | `py -3 tools/check_convention.py "templates/НоваяКнопка.pushbutton" --strict` | ❌ Wave 0 |
-| CONV-STD | revit_compat.py и шаблон синтаксически валидны | smoke | `py -3 -m py_compile "MM LAB.extension/lib/revit_compat.py" "templates/НоваяКнопка.pushbutton/script.py"` | ✅ (команда доступна сразу) |
+| CONV-STD | revit_compat.py и шаблон синтаксически валидны | smoke | `py -3 -m py_compile "MM_LAB.extension/lib/revit_compat.py" "templates/НоваяКнопка.pushbutton/script.py"` | ✅ (команда доступна сразу) |
 | CONV-REG | MM007: layout-регистрация и орфаны детектируются | unit | входит в test_check_convention (fixtures с panel bundle.yaml) | ❌ Wave 0 |
 | CONV-ADAPT | /mm-adopt-script: чекер→diff→approve→регистрация | manual-only | сценарий в Claude Code на IFC_Двери (ревью-гейт D-08 требует человека) | — |
 | CONV-GSD | Quick task артефакты создаются (`.planning/quick/<id>/`, STATE-таблица) | manual/интеграция агента | проверка файлов после прогона команды | — |
@@ -598,7 +598,7 @@ layout:
 ## Sources
 
 ### Primary (HIGH confidence)
-- Живой код репозитория: `MM LAB.extension/lib/ios_common_helpers.py`, `revit_ui_helpers.py`, скрипты «Мокрые зоны»/«Сброс потерь»/«Экспорт ПСО»/IFC_*, все bundle.yaml, `.planning/quick/260709-jko-*`, `.claude/skills/*` — прямое чтение
+- Живой код репозитория: `MM_LAB.extension/lib/ios_common_helpers.py`, `revit_ui_helpers.py`, скрипты «Мокрые зоны»/«Сброс потерь»/«Экспорт ПСО»/IFC_*, все bundle.yaml, `.planning/quick/260709-jko-*`, `.claude/skills/*` — прямое чтение
 - [pyRevit docs (readthedocs): Extensions and Commands](https://pyrevit1.readthedocs.io/en/latest/creatingexts.html) — layout/`---`/`>>>`, bundle lib, .lib extensions
 - [pyRevit forum: lib folder — builtin feature](https://discourse.pyrevitlabs.io/t/lib-folder-custom-modules-for-all-commands-in-the-extension/7764) — auto sys.path + reload
 - [pyrevit compat.py (master, raw)](https://raw.githubusercontent.com/pyrevitlabs/pyRevit/master/pyrevitlib/pyrevit/compat.py) — NETCORE/get_elementid_value_func/_get_revit_version

@@ -11,7 +11,7 @@ date: 2026-07-09
 - Изменено файлов: 5
 
 ## Изменённые файлы
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py`
 - `.planning/debug/wet-zones-get-parameter.md`
 - `MMLabs_OBSIDIAN/knowledge/debugging/Замена get_Parameter на LookupParameter небезопасна для локализованного Revit.md`
 - `MMLabs_OBSIDIAN/00-home/index.md`

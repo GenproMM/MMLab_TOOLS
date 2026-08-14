@@ -9,7 +9,7 @@ status: complete
 Принять и адаптировать сторонний скрипт классификации окон по МССК под
 конвенцию MM LAB (процедура `/mm-adopt-script`).
 
-- Источник: `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/script.py`
+- Источник: `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/script.py`
   (лежал как `pending_adoption` в `tools/convention_baseline.json`).
 - Панель: **АРХИТЕКТУРА** (категория `OST_Windows`, IFC-классификация окон).
 - Полный аналог уже принятой кнопки `IFC_Двери` (те же общие параметры

@@ -19,7 +19,7 @@ MMLab_TOOLS/
 ├── AGENTS.md                        # этот стандарт (единственный источник правды)
 ├── CLAUDE.md / GEMINI.md            # тонкие указатели агентов (@AGENTS.md)
 ├── .kilocode/rules/00-mmlab.md      # указатель для старых версий Kilo Code
-├── MM LAB.extension/                # расширение pyRevit
+├── MM_LAB.extension/                # расширение pyRevit
 │   ├── lib/                         # first-party библиотека: revit_compat.py и хелперы
 │   └── MM Lab.tab/                  # вкладка MM Lab
 │       ├── bundle.yaml              # layout вкладки (порядок панелей)
@@ -32,7 +32,7 @@ MMLab_TOOLS/
 └── agents/commands/                 # канонические процедуры mm-команд
 ```
 
-- **First-party lib** — `MM LAB.extension/lib`: pyRevit сам добавляет этот каталог в
+- **First-party lib** — `MM_LAB.extension/lib`: pyRevit сам добавляет этот каталог в
   `sys.path` всем командам расширения. Правки в `lib` подхватываются только после
   pyRevit Reload (или перезапуска Revit).
 - **Vendored lib** — корневой `lib/` (openpyxl, et_xmlfile): в `sys.path` автоматически
@@ -70,14 +70,14 @@ MMLab_TOOLS/
    Синтаксис — консервативный: без `match` и walrus-оператора `:=` — движок pyRevit может
    быть старше локального Python. Чекер — статический гейт; runtime-истина — проверка в Revit (UAT).
 4. **Импорты только из белого списка** [MM008]: stdlib + хост-платформа (`clr`, `System`,
-   `Autodesk`, `pyrevit`, `Microsoft`) + first-party `MM LAB.extension/lib` + vendored
+   `Autodesk`, `pyrevit`, `Microsoft`) + first-party `MM_LAB.extension/lib` + vendored
    (`openpyxl`, `et_xmlfile`). «Без сторонних импортов» означает: pip-пакеты и любые другие
    библиотеки запрещены; ЯВНОЕ исключение — vendored-библиотеки в корневом `lib/`,
    подключаемые через `revit_compat.ensure_vendor_lib()`.
 5. **Запрет wildcard-импортов** [MM009]: `from X import *` не используется — импортируй
    имена явно.
 6. **Общие функции — в lib.** Логика, нужная двум и более кнопкам, живёт в
-   `MM LAB.extension/lib`; дублирование её копий в скриптах запрещено.
+   `MM_LAB.extension/lib`; дублирование её копий в скриптах запрещено.
 7. **Параметры элементов — через revit_compat** [MM010]: `revit_compat.get_parameter(...)`
    с `BuiltInParameter` или `revit_compat.get_shared_parameter(...)` с GUID.
    `LookupParameter("строковый литерал")` в скриптах запрещён — строковые имена
@@ -112,7 +112,7 @@ import os
 import sys
 
 _SCRIPT_DIR = os.path.dirname(__file__)
-# pushbutton -> panel -> tab -> MM LAB.extension
+# pushbutton -> panel -> tab -> MM_LAB.extension
 _EXTENSION_DIR = os.path.normpath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
 _LIB_DIR = os.path.join(_EXTENSION_DIR, "lib")
 if os.path.isdir(_LIB_DIR) and _LIB_DIR not in sys.path:
@@ -166,7 +166,7 @@ author: "GENPRO LAB"
 Поддерживаемые версии — `revit_compat.SUPPORTED_VERSIONS = (2020, 2022, 2024)`.
 На неподдерживаемой или неопределённой версии кнопка обязана завершаться fail-fast
 с перечнем поддерживаемых версий (правило 9). Ломающие изменения API закрыты хелперами
-`MM LAB.extension/lib/revit_compat.py`:
+`MM_LAB.extension/lib/revit_compat.py`:
 
 | Область | Было (Revit 2020) | Стало (2022 / 2024) | Хелпер revit_compat |
 | ---------- | -------------------------------- | ---------------------------------------------- | ------------------------------------- |
@@ -202,7 +202,7 @@ author: "GENPRO LAB"
 
 ```bash
 # одна кнопка (папка *.pushbutton)
-py -3 tools/check_convention.py "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Кнопка>.pushbutton"
+py -3 tools/check_convention.py "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Кнопка>.pushbutton"
 
 # сырой .py (правила уровня файла + AST; структурные пропускаются)
 py -3 tools/check_convention.py "путь/к/скрипту.py"
@@ -268,8 +268,11 @@ Exit-коды: 0 — чисто, 1 — есть нарушения (в `--strict
 | `/mm-update-repo` | безопасное обновление репозитория (fetch/pull, проверка чистоты дерева) | `agents/commands/mm-update-repo.md` |
 | `/mm-doctor` | self-check: версии Revit vs поддерживаемые, vendored lib, полнота кнопок | `agents/commands/mm-doctor.md` |
 | `/mm-new-compat` | добавить ветку новой версии Revit в `revit_compat.py` | `agents/commands/mm-new-compat.md` |
+| `/mm-releasemap-download` | скачать Карту релизов: ресинк `.planning/*` из CSV-экспорта Google-таблицы | `agents/commands/mm-releasemap-download.md` |
 
 Фраза пользователя «сохрани сессию» = выполнить процедуру `/mm-save-session`.
+Фраза «Синхронизируй gsd» / «скачай карту релизов» = выполнить процедуру
+`/mm-releasemap-download`.
 Полные тексты процедур здесь не дублируются — читай файл команды в `agents/commands/`.
 
 ## Git-регламент

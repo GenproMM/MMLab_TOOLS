@@ -40,7 +40,7 @@
 
 ## Зависимости
 
-Внешних зависимостей нет. Общие функции — в `MM LAB.extension/lib`
+Внешних зависимостей нет. Общие функции — в `MM_LAB.extension/lib`
 (`revit_compat`, `revit_ui_helpers`). Окно вывода — `pyrevit.script`.
 
 ## Совместимость

@@ -41,7 +41,7 @@ TypeError: No method matches given arguments for get_Parameter: (<class 'int'>)
 # Analysis
 
 ## Code at fault
-File: `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py`
+File: `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py`
 Line 103:
 ```python
 phase_param = room.get_Parameter(BuiltInParameter.ROOM_PHASE)
@@ -130,7 +130,7 @@ root_cause: "В pythonnet (CPython 3 .NET bridge, используемый pyRev
 
 **Fix:** Заменить `room.get_Parameter(BuiltInParameter.ROOM_PHASE)` на `room.LookupParameter("Phase")`. `LookupParameter` имеет единственную перегрузку `(string)` — резолвер всегда сработает. Альтернатива: `room.Phase` (свойство `SpatialElement`, доступно во всех релевантных версиях Revit).
 
-**Файл для изменения:** `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py`, строка 103.
+**Файл для изменения:** `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py`, строка 103.
 
 **Верификация:** После замены ошибка `TypeError: No method matches given arguments for get_Parameter: (<class 'int'>)` должна исчезнуть на проблемном ПК. Требуется подтверждение пользователя.
 

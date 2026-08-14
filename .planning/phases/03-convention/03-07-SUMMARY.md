@@ -166,7 +166,7 @@ Each task was committed atomically:
 
 ## Issues Encountered
 
-- `py_compile` (последний шаг составной verify) создал `__pycache__/` в `templates/НоваяКнопка.pushbutton` и `MM LAB.extension/lib` — удалены сразу после прогона (известный pitfall фазы: мусор роняет следующий `--strict` по MM013); контрольный strict-прогон после чистки — exit 0
+- `py_compile` (последний шаг составной verify) создал `__pycache__/` в `templates/НоваяКнопка.pushbutton` и `MM_LAB.extension/lib` — удалены сразу после прогона (известный pitfall фазы: мусор роняет следующий `--strict` по MM013); контрольный strict-прогон после чистки — exit 0
 
 ## Known Stubs
 

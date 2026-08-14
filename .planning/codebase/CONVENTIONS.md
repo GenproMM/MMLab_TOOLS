@@ -5,11 +5,11 @@
 ## Naming Patterns
 
 **Files:**
-- pyRevit command entry files use fixed filename `script.py` under button folders, e.g. `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py` and `MM LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
-- Command metadata is colocated in `bundle.yaml`, e.g. `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/bundle.yaml`.
+- pyRevit command entry files use fixed filename `script.py` under button folders, e.g. `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py` and `MM_LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
+- Command metadata is colocated in `bundle.yaml`, e.g. `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/bundle.yaml`.
 
 **Functions:**
-- `snake_case` for helpers and domain logic: `feet_to_meters`, `get_floor_thickness`, `collect_elements`, `parse_revision_date` in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py`, `MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`, and `MM LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
+- `snake_case` for helpers and domain logic: `feet_to_meters`, `get_floor_thickness`, `collect_elements`, `parse_revision_date` in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py`, `MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`, and `MM_LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
 
 **Variables:**
 - Local variables use `snake_case` (`levels_collector`, `closest_floor`, `target_params`).
@@ -22,11 +22,11 @@
 
 **Formatting:**
 - Tool used: Not detected (no `.editorconfig`, `pyproject.toml`, `setup.cfg`, `ruff.toml`, or formatter config at repository root).
-- Style is hand-formatted with 4-space indentation and explicit section headers (`# === IMPORTS ===`, `# === MAIN ===`) in `MM LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
+- Style is hand-formatted with 4-space indentation and explicit section headers (`# === IMPORTS ===`, `# === MAIN ===`) in `MM_LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
 
 **Linting:**
 - Tool used: Not detected (no `flake8`, `pylint`, `ruff`, or mypy configuration files detected).
-- Convention to follow: keep scripts self-validating with defensive checks and explicit `try/except` blocks, as seen in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py`.
+- Convention to follow: keep scripts self-validating with defensive checks and explicit `try/except` blocks, as seen in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py`.
 
 ## Import Organization
 
@@ -38,12 +38,12 @@
 
 **Path Aliases:**
 - No Python package aliasing scheme detected.
-- Vendor injection uses `sys.path.insert(0, VENDOR_DIR)` in `MM LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py` to load `lib`.
+- Vendor injection uses `sys.path.insert(0, VENDOR_DIR)` in `MM_LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py` to load `lib`.
 
 ## Error Handling
 
 **Patterns:**
-- Guard for missing active document with `TaskDialog.Show(...)` and early return (`get_document` pattern in `MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`).
+- Guard for missing active document with `TaskDialog.Show(...)` and early return (`get_document` pattern in `MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`).
 - Transaction safety pattern: `transaction.Start()` + `Commit()` in `try`, `RollBack()` in `except`.
 - Top-level exception trap shows UI error instead of traceback (`show_error(COMMAND_NAME, ex)`).
 
@@ -51,11 +51,11 @@
 
 **Framework:**
 - UI-first reporting through `Autodesk.Revit.UI.TaskDialog`.
-- Secondary textual output via `pyrevit.script.get_output()` in `MM LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
+- Secondary textual output via `pyrevit.script.get_output()` in `MM_LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
 
 **Patterns:**
 - User-facing completion/error summaries use dialog messages.
-- Console `print(...)` appears only for local exception notes in utility functions (`get_materials_with_kod_edinicy` in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`).
+- Console `print(...)` appears only for local exception notes in utility functions (`get_materials_with_kod_edinicy` in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`).
 
 ## Comments
 
@@ -85,7 +85,7 @@
 
 **Exports:**
 - No package export layer for command scripts; each `script.py` is an executable module entry point.
-- Shared logic is currently copied across button scripts (same helper block in `MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py` and `MM LAB.extension/MM Lab.tab/ИОС.panel/Приточный по классификации.pushbutton/script.py`).
+- Shared logic is currently copied across button scripts (same helper block in `MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py` and `MM_LAB.extension/MM Lab.tab/ИОС.panel/Приточный по классификации.pushbutton/script.py`).
 
 **Barrel Files:**
 - Not used for extension command code.

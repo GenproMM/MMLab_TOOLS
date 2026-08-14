@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Каталожный тест согласованности команд MM LAB (план 03-07).
 
-Исполняемая спецификация каталога mm-команд: 7 канонических процедур
-в agents/commands/ и 21 тонкий адаптер (7 слагов × Claude Code / Gemini CLI /
+Исполняемая спецификация каталога mm-команд: 8 канонических процедур
+в agents/commands/ и 24 тонких адаптера (8 слагов × Claude Code / Gemini CLI /
 Kilo Code). Защищает каталог от дрейфа:
 
     * канонические процедуры существуют и содержат раздел «## Процедура»;
@@ -12,7 +12,7 @@ Kilo Code). Защищает каталог от дрейфа:
     * ни один адаптер не содержит shell-вставок "!{...}" (T-03-21);
     * в каталогах адаптеров нет mm-файлов вне SLUGS — защита от
       команд-двойников с опечатками в слагах (T-03-22);
-    * AGENTS.md перечисляет все 7 команд каталога.
+    * AGENTS.md перечисляет все 8 команд каталога.
 
 Запуск:
     py -3 -m unittest discover -s tools/tests -p "test_mm_commands*.py" -q
@@ -30,6 +30,7 @@ SLUGS = [
     "mm-update-repo",
     "mm-doctor",
     "mm-new-compat",
+    "mm-releasemap-download",
 ]
 
 # tools/tests/ -> tools/ -> корень репозитория
@@ -47,7 +48,7 @@ def _read(path):
 
 
 def _adapter_paths():
-    """Все 21 путь адаптеров: пары (слаг, путь) для трёх агентов."""
+    """Все 24 пути адаптеров: пары (слаг, путь) для трёх агентов."""
     for slug in SLUGS:
         yield slug, CLAUDE_DIR / (slug + ".md")
         yield slug, GEMINI_DIR / (slug + ".toml")
@@ -55,7 +56,7 @@ def _adapter_paths():
 
 
 class TestMmCommandsCatalog(unittest.TestCase):
-    """Согласованность каталога: 7 слагов × 3 адаптера + 7 процедур."""
+    """Согласованность каталога: 8 слагов × 3 адаптера + 8 процедур."""
 
     def test_canonical_procedures_exist(self):
         """У каждого слага есть канонический файл agents/commands/<слаг>.md."""
@@ -121,7 +122,7 @@ class TestMmCommandsCatalog(unittest.TestCase):
                 )
 
     def test_no_shell_injection_in_adapters(self):
-        """Ни один из 21 адаптера не содержит shell-вставок "!{" (T-03-21)."""
+        """Ни один из 24 адаптеров не содержит shell-вставок "!{" (T-03-21)."""
         for slug, path in _adapter_paths():
             with self.subTest(path=str(path.relative_to(REPO))):
                 self.assertNotIn(
@@ -151,7 +152,7 @@ class TestMmCommandsCatalog(unittest.TestCase):
                     )
 
     def test_agents_md_lists_all_slugs(self):
-        """AGENTS.md (§Команды MM LAB) перечисляет каждый из 7 слагов."""
+        """AGENTS.md (§Команды MM LAB) перечисляет каждый из 8 слагов."""
         text = _read(REPO / "AGENTS.md")
         for slug in SLUGS:
             with self.subTest(slug=slug):

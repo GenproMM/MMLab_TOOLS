@@ -21,7 +21,7 @@ updated: 2026-07-24
 | **Framework** | Python stdlib `unittest` (фреймворков в репо нет; pytest сознательно не вводим) |
 | **Config file** | none — Wave 1 / план 03-01 Task 1 создаёт `tools/tests/` (это и есть Wave 0-инфраструктура фазы) |
 | **Quick run command** | `py -3 -m unittest discover -s tools/tests -q` |
-| **Full suite command** | `py -3 -m unittest discover -s tools/tests -q && py -3 tools/check_convention.py --all --baseline tools/convention_baseline.json && py -3 tools/check_convention.py "templates/НоваяКнопка.pushbutton" --strict && py -3 -m py_compile "MM LAB.extension/lib/revit_compat.py" "templates/НоваяКнопка.pushbutton/script.py"` |
+| **Full suite command** | `py -3 -m unittest discover -s tools/tests -q && py -3 tools/check_convention.py --all --baseline tools/convention_baseline.json && py -3 tools/check_convention.py "templates/НоваяКнопка.pushbutton" --strict && py -3 -m py_compile "MM_LAB.extension/lib/revit_compat.py" "templates/НоваяКнопка.pushbutton/script.py"` |
 | **Estimated runtime** | ~10 seconds (quick), ~30 seconds (full) |
 
 Примечание: до завершения плана 03-04 полная команда невыполнима целиком (baseline/шаблон ещё не созданы) — на волнах 1–2 прогонять только unittest-часть с шаблонами имён (`-p "test_check_convention*.py"`, `-p "test_revit_compat*.py"`), чтобы параллельные планы не ловили чужой RED.
@@ -43,7 +43,7 @@ updated: 2026-07-24
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
 | 03-01 T1 (RED: фикстуры+тесты) | 03-01 | 1 | CONV-CHECK, CONV-REG | T-03-01 | тесты фиксируют ast-only анализ | unit (RED) | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` (ожидаемо ≠0) | создаёт | ⬜ pending |
 | 03-01 T2 (GREEN: чекер MM000–MM007, MM013) | 03-01 | 1 | CONV-CHECK, CONV-REG | T-03-01, T-03-02, T-03-03 | нет import/exec/eval; пути нормализованы | unit | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` | ✅ после T1 | ⬜ pending |
-| 03-02 T1 (revit_compat.py) | 03-02 | 1 | CONV-STD | T-03-05, T-03-06 | compat не открывает транзакций; fail-fast D-03 | smoke | `py -3 -m py_compile "MM LAB.extension/lib/revit_compat.py"` | ✅ | ⬜ pending |
+| 03-02 T1 (revit_compat.py) | 03-02 | 1 | CONV-STD | T-03-05, T-03-06 | compat не открывает транзакций; fail-fast D-03 | smoke | `py -3 -m py_compile "MM_LAB.extension/lib/revit_compat.py"` | ✅ | ⬜ pending |
 | 03-02 T2 (контрактный тест) | 03-02 | 1 | CONV-STD | — | — | unit (ast-контракт) | `py -3 -m unittest discover -s tools/tests -p "test_revit_compat*.py" -q` | создаёт | ⬜ pending |
 | 03-03 T1 (RED: AST-правила MM008–MM012, MM014) | 03-03 | 2 | CONV-CHECK | T-03-01 | — | unit (RED) | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` (ожидаемо ≠0) | ✅ | ⬜ pending |
 | 03-03 T2 (GREEN: MM008–MM012, MM014) | 03-03 | 2 | CONV-CHECK | T-03-01, T-03-08 | first-party список из стемов, без исполнения | unit | `py -3 -m unittest discover -s tools/tests -p "test_check_convention*.py" -q` | ✅ | ⬜ pending |

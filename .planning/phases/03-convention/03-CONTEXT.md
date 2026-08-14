@@ -74,11 +74,11 @@
 - `.planning/STATE.md` — накопленный контекст и текущая позиция (Phase 3 of 3).
 
 ### Существующий код (образцы и точки интеграции)
-- `MM LAB.extension/lib/ios_common_helpers.py` — существующий shared-модуль (Phase 1/2) — паттерн для `compat`.
-- `MM LAB.extension/lib/revit_ui_helpers.py` — shared UI-хелперы (`alert`).
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py` — образцовая шапка + `_get_param` с `get_Parameter.__overloads__[BuiltInParameter]` (семя `compat`).
-- `MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py` — альтернативный (иной) lib-бутстрап — унифицировать в шаблоне.
-- `MM LAB.extension/MM Lab.tab/bundle.yaml` — регистрация панелей/кнопок (цель для команды приёмки).
+- `MM_LAB.extension/lib/ios_common_helpers.py` — существующий shared-модуль (Phase 1/2) — паттерн для `compat`.
+- `MM_LAB.extension/lib/revit_ui_helpers.py` — shared UI-хелперы (`alert`).
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py` — образцовая шапка + `_get_param` с `get_Parameter.__overloads__[BuiltInParameter]` (семя `compat`).
+- `MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py` — альтернативный (иной) lib-бутстрап — унифицировать в шаблоне.
+- `MM_LAB.extension/MM Lab.tab/bundle.yaml` — регистрация панелей/кнопок (цель для команды приёмки).
 
 ### Карты кодовой базы
 - `.planning/codebase/CONVENTIONS.md` — текущие naming/import/error-паттерны (основа стандарта).

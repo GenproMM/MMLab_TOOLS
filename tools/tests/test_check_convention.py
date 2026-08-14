@@ -42,15 +42,15 @@ FIXTURES = Path(__file__).resolve().parent / "fixtures"
 REPO_OK = FIXTURES / "repo_ok"
 REPO_BAD = FIXTURES / "repo_bad"
 GOOD_BUTTON = (
-    REPO_OK / "MM LAB.extension" / "MM Lab.tab"
+    REPO_OK / "MM_LAB.extension" / "MM Lab.tab"
     / "Тестовая панель.panel" / "Хорошая кнопка.pushbutton"
 )
 BAD_BUTTON = (
-    REPO_BAD / "MM LAB.extension" / "MM Lab.tab"
+    REPO_BAD / "MM_LAB.extension" / "MM Lab.tab"
     / "Плохая панель.panel" / "Плохая кнопка.pushbutton"
 )
-TAB_BUNDLE_REL = "MM LAB.extension/MM Lab.tab/bundle.yaml"
-PANEL_BUNDLE_REL = "MM LAB.extension/MM Lab.tab/Плохая панель.panel/bundle.yaml"
+TAB_BUNDLE_REL = "MM_LAB.extension/MM Lab.tab/bundle.yaml"
+PANEL_BUNDLE_REL = "MM_LAB.extension/MM Lab.tab/Плохая панель.panel/bundle.yaml"
 
 
 def run_main(args):
@@ -67,7 +67,7 @@ def run_main(args):
 def copy_button_to_tmp(test_case, with_panel=False):
     """Копирует «Хорошую кнопку» во временный корень.
 
-    with_panel=True  -> tmp/MM LAB.extension/MM Lab.tab/П.panel/Хорошая кнопка.pushbutton
+    with_panel=True  -> tmp/MM_LAB.extension/MM Lab.tab/П.panel/Хорошая кнопка.pushbutton
     with_panel=False -> tmp/Хорошая кнопка.pushbutton (вне *.panel)
 
     Возвращает (root, button_dir).
@@ -76,7 +76,7 @@ def copy_button_to_tmp(test_case, with_panel=False):
     test_case.addCleanup(tmp.cleanup)
     root = Path(tmp.name)
     if with_panel:
-        dest = (root / "MM LAB.extension" / "MM Lab.tab"
+        dest = (root / "MM_LAB.extension" / "MM Lab.tab"
                 / "П.panel" / "Хорошая кнопка.pushbutton")
     else:
         dest = root / "Хорошая кнопка.pushbutton"
@@ -261,11 +261,11 @@ class AstRuleTests(unittest.TestCase):
         self.assertNotIn("MM008", self.codes_of(source))
 
     def test_mm008_allows_first_party_lib(self):
-        # tmp-репо: first-party модуль в MM LAB.extension/lib разрешён.
+        # tmp-репо: first-party модуль в MM_LAB.extension/lib разрешён.
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         root = Path(tmp.name)
-        lib_dir = root / "MM LAB.extension" / "lib"
+        lib_dir = root / "MM_LAB.extension" / "lib"
         lib_dir.mkdir(parents=True)
         (lib_dir / "my_helpers.py").write_text("VALUE = 1\n", encoding="utf-8")
         self.assertIn("my_helpers",
@@ -366,7 +366,7 @@ class AstRuleTests(unittest.TestCase):
             "import sys\n"
             "\n"
             "_SCRIPT_DIR = os.path.dirname(__file__)\n"
-            "# pushbutton -> panel -> tab -> MM LAB.extension\n"
+            "# pushbutton -> panel -> tab -> MM_LAB.extension\n"
             "_EXTENSION_DIR = os.path.normpath("
             "os.path.join(_SCRIPT_DIR, \"..\", \"..\", \"..\"))\n"
             "_LIB_DIR = os.path.join(_EXTENSION_DIR, \"lib\")\n"
@@ -502,7 +502,7 @@ class CheckerRegressionTests(unittest.TestCase):
         # WR-02: *.pushbutton внутри .vs/, __pycache__/ или другой кнопки —
         # артефакты редакторов, кнопками НЕ считаются.
         root, button = copy_button_to_tmp(self, with_panel=True)
-        tab_dir = root / "MM LAB.extension" / "MM Lab.tab"
+        tab_dir = root / "MM_LAB.extension" / "MM Lab.tab"
         (tab_dir / ".vs" / "Артефакт.pushbutton").mkdir(parents=True)
         (tab_dir / "__pycache__" / "Кеш.pushbutton").mkdir(parents=True)
         (button / "Вложенная.pushbutton").mkdir()

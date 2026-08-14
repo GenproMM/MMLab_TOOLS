@@ -21,15 +21,15 @@ Not detected              # Coverage
 ## Test File Organization
 
 **Location:**
-- No automated test directories detected for first-party command code under `MM LAB.extension`.
-- No files matching `*.test.py` or `*test*.py` were detected under `MM LAB.extension`.
+- No automated test directories detected for first-party command code under `MM_LAB.extension`.
+- No files matching `*.test.py` or `*test*.py` were detected under `MM_LAB.extension`.
 
 **Naming:**
-- Production command entry files use `script.py` naming in button folders, e.g. `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`.
+- Production command entry files use `script.py` naming in button folders, e.g. `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`.
 
 **Structure:**
 ```
-MM LAB.extension/
+MM_LAB.extension/
   MM Lab.tab/
     <Panel>.panel/
       <Command>.pushbutton/
@@ -46,8 +46,8 @@ MM LAB.extension/
 ```
 
 **Patterns:**
-- Setup pattern: interactive Revit context setup (`__revit__.ActiveUIDocument`) before command execution in `MM LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
-- Teardown pattern: transaction rollback on exception (`transaction.RollBack()`) in `MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`.
+- Setup pattern: interactive Revit context setup (`__revit__.ActiveUIDocument`) before command execution in `MM_LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton/script.py`.
+- Teardown pattern: transaction rollback on exception (`transaction.RollBack()`) in `MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`.
 - Assertion pattern: runtime guard conditions plus UI confirmation (`TaskDialog.Show(...)`) instead of unit assertions.
 
 ## Mocking
@@ -93,11 +93,11 @@ Not applicable
 
 **Integration Tests:**
 - Informal runtime integration occurs inside Revit through command execution with live model data.
-- Evidence: transaction-based execution and user dialogs in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py` and `MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`.
+- Evidence: transaction-based execution and user dialogs in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py` and `MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py`.
 
 **E2E Tests:**
 - No dedicated E2E framework detected.
-- Practical E2E is manual UAT through pyRevit button invocation and report dialogs, documented in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/README.md`.
+- Practical E2E is manual UAT through pyRevit button invocation and report dialogs, documented in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/README.md`.
 
 ## Common Patterns
 

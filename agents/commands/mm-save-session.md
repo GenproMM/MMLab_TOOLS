@@ -41,7 +41,7 @@
    путь явно и в кавычках (кириллица в путях — норма этого репозитория):
 
    ```bash
-   git add "MM LAB.extension/MM Lab.tab/<...>/script.py"
+   git add "MM_LAB.extension/MM Lab.tab/<...>/script.py"
    git add "MMLabs_OBSIDIAN/sessions/<YYYY-MM-DD>-<тема>.md"
    ```
 

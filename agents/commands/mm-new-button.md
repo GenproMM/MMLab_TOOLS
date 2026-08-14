@@ -17,11 +17,11 @@ Duct/Pipe/Mechanical/MEP/поток/система → ИОС; Room/Area/Wall/Do
 ## Процедура
 
 1. **Согласуй имя и панель** с пользователем (см. Аргументы). Убедись, что папки
-   `MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton` ещё нет.
+   `MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton` ещё нет.
 
 2. **Скопируй шаблон** целиком:
    из `templates/НоваяКнопка.pushbutton/`
-   в `MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/`
+   в `MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/`
    (три файла: `script.py`, `bundle.yaml`, `README.md`). Файлы записывай
    в UTF-8 БЕЗ BOM (MM003).
 
@@ -37,13 +37,13 @@ Duct/Pipe/Mechanical/MEP/поток/система → ИОС; Room/Area/Wall/Do
 
 4. **Зарегистрируй кнопку в layout** (MM007): допиши запись `- <Имя>`
    (имя папки БЕЗ суффикса `.pushbutton`) в `layout:` файла
-   `MM LAB.extension/MM Lab.tab/<Панель>.panel/bundle.yaml`;
+   `MM_LAB.extension/MM Lab.tab/<Панель>.panel/bundle.yaml`;
    место в списке согласуй или добавь в конец.
 
 5. **Прогони строгий чекер** до зелёного (exit 0):
 
    ```bash
-   py -3 tools/check_convention.py "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton" --strict
+   py -3 tools/check_convention.py "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton" --strict
    ```
 
    Пока exit-код не 0 — исправляй нарушения и повторяй.
@@ -53,10 +53,10 @@ Duct/Pipe/Mechanical/MEP/поток/система → ИОС; Room/Area/Wall/Do
 
    ```bash
    git -c core.quotepath=false status --porcelain
-   git add "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/script.py"
-   git add "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/bundle.yaml"
-   git add "MM LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/README.md"
-   git add "MM LAB.extension/MM Lab.tab/<Панель>.panel/bundle.yaml"
+   git add "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/script.py"
+   git add "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/bundle.yaml"
+   git add "MM_LAB.extension/MM Lab.tab/<Панель>.panel/<Имя>.pushbutton/README.md"
+   git add "MM_LAB.extension/MM Lab.tab/<Панель>.panel/bundle.yaml"
    git commit -m "скаффолд: новая кнопка <Имя> на панели <Панель>"
    ```
 
@@ -66,7 +66,7 @@ Duct/Pipe/Mechanical/MEP/поток/система → ИОС; Room/Area/Wall/Do
 
 - **Запрещено создавать кнопку внутри `templates/`** — шаблон только копируется;
   рабочее место кнопки — исключительно
-  `MM LAB.extension/MM Lab.tab/<Панель>.panel/` (D-14: pyRevit не грузит
+  `MM_LAB.extension/MM Lab.tab/<Панель>.panel/` (D-14: pyRevit не грузит
   `templates/`, кнопка там никогда не появится).
 - **Регистрация в layout обязательна** — кнопка вне `layout:` panel-bundle.yaml
   не видна на pyRevit ≤ 5.x (MM007).

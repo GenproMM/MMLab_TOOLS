@@ -82,12 +82,12 @@ script.py — вариант, явно допущенный ревью). Соо�
 **Applied fix:** `test_compiles` компилирует через
 `py_compile.compile(..., cfile=...)` во временный каталог
 (`tempfile.TemporaryDirectory`). Эмпирически: после прогона suite каталог
-`MM LAB.extension/lib/__pycache__/` не создаётся — `/mm-doctor` снова
+`MM_LAB.extension/lib/__pycache__/` не создаётся — `/mm-doctor` снова
 действительно read-only.
 
 ### WR-06: revit_compat повторно детектировал версию вместо валидированной
 
-**Files modified:** `MM LAB.extension/lib/revit_compat.py`
+**Files modified:** `MM_LAB.extension/lib/revit_compat.py`
 **Commit:** bf1614d
 **Applied fix:** Добавлен модульный кеш `_VALIDATED_VERSION`
 (заполняется в `require_supported_version` при успехе) и приватный хелпер

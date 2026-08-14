@@ -468,7 +468,7 @@ def ensure_vendor_lib():
     vendored-пакет. Возвращает путь к каталогу либо None, если каталог
     не найден.
     """
-    # lib -> MM LAB.extension -> корень репозитория
+    # lib -> MM_LAB.extension -> корень репозитория
     repo_root = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
     vendor_dir = os.path.join(repo_root, "lib")
     if not os.path.isdir(vendor_dir):

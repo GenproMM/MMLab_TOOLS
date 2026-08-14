@@ -22,7 +22,7 @@ expected: Кнопка-пример работает на Revit 2020/2022/2024; 
 result: [pending]
 
 ### 2. /mm-adopt-script на IFC_Двери — ревью-гейт (CONV-ADAPT)
-expected: В Claude Code `/mm-adopt-script` на `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton`: чекер отрабатывает → панель спрашивается с авто-подсказкой (D-10) → показан diff → без явного «да» регистрации НЕТ (D-08) → после «да» кнопка появляется в bundle.yaml.
+expected: В Claude Code `/mm-adopt-script` на `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton`: чекер отрабатывает → панель спрашивается с авто-подсказкой (D-10) → показан diff → без явного «да» регистрации НЕТ (D-08) → после «да» кнопка появляется в bundle.yaml.
 result: [pending]
 
 ### 3. Quick task GSD после приёмки (CONV-GSD)

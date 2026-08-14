@@ -21,9 +21,9 @@ layout панели (MM007), запись из `pending_adoption` снята.
 Строгий чекер и общий прогон с baseline — exit 0.
 
 Файлы:
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/script.py`
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/bundle.yaml`
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/README.md`
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/icon.png`
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/script.py`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/bundle.yaml`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/README.md`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/icon.png`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`
 - `tools/convention_baseline.json`

@@ -48,7 +48,7 @@ Progress: [██████░░░░] 67%
 - [Phase 03-convention]: Чекер конвенции: bundle.yaml разбирается построчным stdlib-парсером ограниченной схемы (без PyYAML); ограничение задокументировано в docstring
 - [Phase 03-convention]: Пути нарушений чекера — POSIX-relpath от --root: стабильные ключи для baseline grandfathering legacy-кнопок
 - [Phase 03-convention]: revit_compat: детекция версии каскадом (аргумент -> builtins.__revit__ -> pyrevit.HOST_APP через .version); при неопределённой версии units-ветка 2022+, гейт версии обязателен до convert_*
-- [Phase 03-convention]: Белый список импортов MM008 строится динамически из стемов MM LAB.extension/lib/*.py без чтения содержимого (T-03-08); root=None — сырой режим без first-party
+- [Phase 03-convention]: Белый список импортов MM008 строится динамически из стемов MM_LAB.extension/lib/*.py без чтения содержимого (T-03-08); root=None — сырой режим без first-party
 - [Phase 03-convention]: MM014: единственная чистая форма lib-бутстрапа — sys.path.insert(0, _LIB_DIR); триггеры — имя EXTENSION_ROOT, 4+ '..' в os.path.join, любой иной sys.path-вызов (D-15)
 - [Phase 03-convention]: Baseline конвенции генерируется только фактическим аудитом (--write-baseline): 21 юнит, 202 нарушения заморожены; записи снимаются при адаптации кнопки (/mm-adopt-script)
 - [Phase 03-convention]: Verify-цепочки: py_compile создаёт __pycache__ в папке кнопки и роняет следующий strict-прогон (MM013) — после py_compile чистить __pycache__ (в .gitignore уже покрыт)

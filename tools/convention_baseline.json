@@ -2,7 +2,7 @@
   "generated": "2026-07-24",
   "note": "Grandfathered legacy-кнопки (units) и временные допуски ещё не принятых кнопок (pending_adoption). При адаптации кнопки удали её запись.",
   "units": {
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton": [
       "MM001",
       "MM002",
       "MM004",
@@ -10,14 +10,14 @@
       "MM011",
       "MM012"
     ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton": [
       "MM001",
       "MM002",
       "MM004",
       "MM010",
       "MM013"
     ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Кривые панели (Импост).pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Кривые панели (Импост).pushbutton": [
       "MM001",
       "MM002",
       "MM004",
@@ -25,19 +25,19 @@
       "MM006",
       "MM013"
     ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Кривые панели.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Кривые панели.pushbutton": [
       "MM001",
       "MM002",
       "MM004",
       "MM010",
       "MM013"
     ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton": [
       "MM011",
       "MM013",
       "MM014"
     ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Проверка зон.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Проверка зон.pushbutton": [
       "MM001",
       "MM002",
       "MM004",
@@ -46,52 +46,52 @@
       "MM012",
       "MM013"
     ],
-    "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton": [
       "MM014"
     ],
-    "MM LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 0.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 0.pushbutton": [
       "MM003",
       "MM004",
       "MM006",
       "MM014"
     ],
-    "MM LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 1.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 1.pushbutton": [
       "MM003",
       "MM004",
       "MM006",
       "MM014"
     ],
-    "MM LAB.extension/MM Lab.tab/ИОС.panel/Замена CAD-геометрии.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/ИОС.panel/Замена CAD-геометрии.pushbutton": [
       "MM001",
       "MM002",
       "MM004",
       "MM006",
       "MM011"
     ],
-    "MM LAB.extension/MM Lab.tab/ИОС.panel/Конфузор-Диффузор.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/ИОС.panel/Конфузор-Диффузор.pushbutton": [
       "MM003",
       "MM004",
       "MM006",
       "MM014"
     ],
-    "MM LAB.extension/MM Lab.tab/ИОС.panel/Приточный по классификации.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/ИОС.panel/Приточный по классификации.pushbutton": [
       "MM003",
       "MM004",
       "MM006",
       "MM014"
     ],
-    "MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton": [
       "MM004",
       "MM006",
       "MM014"
     ],
-    "MM LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ВерсияШаблона.pushbutton": [
       "MM001",
       "MM002",
       "MM011",
       "MM014"
     ],
-    "MM LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ПереименоватьУровни.pushbutton": [
+    "MM_LAB.extension/MM Lab.tab/КООРДИНАЦИЯ.panel/ПереименоватьУровни.pushbutton": [
       "MM001",
       "MM002",
       "MM004",

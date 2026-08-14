@@ -16,7 +16,7 @@ Phase 3 ("Конвенция скриптов MM LAB + команда приём
 
 1. **Convention standard** (`AGENTS.md`, 323 lines, Russian)
 2. **Checker CLI** (`tools/check_convention.py`, 15 rules MM000–MM014)
-3. **Compat module** (`MM LAB.extension/lib/revit_compat.py`, Revit 2020/2022/2024)
+3. **Compat module** (`MM_LAB.extension/lib/revit_compat.py`, Revit 2020/2022/2024)
 4. **Template button** (`templates/НоваяКнопка.pushbutton/`, passes `--strict`)
 5. **MM commands** (7 canonical procedures + 21 adapters for Claude/Gemini/Kilo)
 

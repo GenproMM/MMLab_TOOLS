@@ -17,4 +17,4 @@ against string outcomes ("updated"/"already") — every run was silently misrepo
 "Доп. расход = 1/0" button error was already fixed by prior commits (0acdac0, 7327da9,
 d207200); current code no longer calls `get_Parameter(BuiltInParameter)`.
 
-Files changed: `MM LAB.extension/lib/ios_common_helpers.py`
+Files changed: `MM_LAB.extension/lib/ios_common_helpers.py`

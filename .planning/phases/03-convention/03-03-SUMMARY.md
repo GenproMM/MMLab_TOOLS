@@ -26,10 +26,10 @@ key-files:
   modified:
     - tools/check_convention.py
     - tools/tests/test_check_convention.py
-    - "tools/tests/fixtures/repo_bad/MM LAB.extension/MM Lab.tab/Плохая панель.panel/Плохая кнопка.pushbutton/script.py"
+    - "tools/tests/fixtures/repo_bad/MM_LAB.extension/MM Lab.tab/Плохая панель.panel/Плохая кнопка.pushbutton/script.py"
 
 key-decisions:
-  - "Белый список импортов MM008 строится динамически из стемов MM LAB.extension/lib/*.py без чтения содержимого; root=None — сырой режим без first-party"
+  - "Белый список импортов MM008 строится динамически из стемов MM_LAB.extension/lib/*.py без чтения содержимого; root=None — сырой режим без first-party"
   - "MM014: единственная чистая форма lib-бутстрапа — sys.path.insert(0, _LIB_DIR); триггеры — имя EXTENSION_ROOT, 4+ '..' в os.path.join, любой иной sys.path-вызов"
   - "check_script получил необязательный параметр root (обратная совместимость: 1-аргументный вызов работает как прежде) — CLI-контракт не менялся"
 
@@ -114,7 +114,7 @@ status: complete
 
 ## Decisions Made
 
-- Белый список MM008 строится ТОЛЬКО из стемов файлов `<root>/MM LAB.extension/lib/*.py` (root нормализован, содержимое не читается/не исполняется) — митигация T-03-08 из threat model
+- Белый список MM008 строится ТОЛЬКО из стемов файлов `<root>/MM_LAB.extension/lib/*.py` (root нормализован, содержимое не читается/не исполняется) — митигация T-03-08 из threat model
 - Канон sys.path (MM014) — строго `insert(0, _LIB_DIR)`: Constant int 0 (bool отвергается проверкой типа) + Name ровно `_LIB_DIR`
 - MM014(а) срабатывает на каждое вхождение имени EXTENSION_ROOT (Load и Store) — по букве контракта «ast.Name в любом контексте»; несколько записей одного кода не мешают baseline-механике (пары путь+код)
 - check_script расширен необязательным root вместо новой функции — CLI-контракт и 1-аргументные вызовы из тестов 03-01 не тронуты

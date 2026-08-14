@@ -11,7 +11,7 @@ date: 2026-07-20
 - Изменено файлов: 1
 
 ## Изменённые файлы
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py`
 
 ## Симптом
 Скрипт «Мокрые зоны» падал только на части пользователей с ошибкой:

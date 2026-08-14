@@ -9,9 +9,9 @@ date: 2026-07-24
 Сторонний скрипт классификации окон по МССК принят и адаптирован под конвенцию MM LAB.
 
 ## Ключевые файлы
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/script.py` — адаптированный скрипт
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/bundle.yaml` — подпись и подсказка
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/README.md` — документация
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/script.py` — адаптированный скрипт
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/bundle.yaml` — подпись и подсказка
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Окна.pushbutton/README.md` — документация
 - `.planning/quick/260724-win-adopt-ifc-okna/` — quick task (PLAN + SUMMARY)
 - Коммит: `c85e0f8` (приёмка: кнопка IFC_Окна адаптирована под конвенцию MM LAB)
 

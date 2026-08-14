@@ -1,7 +1,7 @@
 # /mm-new-compat — добавить ветку новой версии Revit в revit_compat.py
 
 Расширение матрицы поддерживаемых версий Revit. Единственное место версионных
-ветвлений в репозитории — `MM LAB.extension/lib/revit_compat.py` (D-01);
+ветвлений в репозитории — `MM_LAB.extension/lib/revit_compat.py` (D-01);
 процедура обновляет его, стандарт и контрактный тест синхронно.
 
 ## Аргументы
@@ -11,7 +11,7 @@
 
 ## Процедура
 
-1. **Прочитай** `MM LAB.extension/lib/revit_compat.py` целиком — карта
+1. **Прочитай** `MM_LAB.extension/lib/revit_compat.py` целиком — карта
    версионных веток и публичный API из 13 функций.
 
 2. **Добавь версию в `SUPPORTED_VERSIONS`** — кортеж в начале модуля,
@@ -33,7 +33,7 @@
    изменения закрывай новыми ветками/хелперами ТОЛЬКО внутри `revit_compat.py`.
 
 4. **Обнови три точки синхронно** (иначе контрактный тест упадёт):
-   - `MM LAB.extension/lib/revit_compat.py` — docstring модуля: строка
+   - `MM_LAB.extension/lib/revit_compat.py` — docstring модуля: строка
      «Совместимость: Revit … / <версия>»;
    - `AGENTS.md` — таблица «Совместимость Revit» и упоминания
      `SUPPORTED_VERSIONS` в тексте стандарта (включая строку «Совместимость:»
@@ -45,7 +45,7 @@
 5. **Прогони проверки:**
 
    ```bash
-   py -3 -m py_compile "MM LAB.extension/lib/revit_compat.py"
+   py -3 -m py_compile "MM_LAB.extension/lib/revit_compat.py"
    py -3 -m unittest discover -s tools/tests -p "test_revit_compat*.py" -q
    ```
 
@@ -56,7 +56,7 @@
 
    ```bash
    git -c core.quotepath=false status --porcelain
-   git add "MM LAB.extension/lib/revit_compat.py"
+   git add "MM_LAB.extension/lib/revit_compat.py"
    git add "AGENTS.md"
    git add "tools/tests/test_revit_compat_contract.py"
    git commit -m "compat: добавлена поддержка Revit <версия>"

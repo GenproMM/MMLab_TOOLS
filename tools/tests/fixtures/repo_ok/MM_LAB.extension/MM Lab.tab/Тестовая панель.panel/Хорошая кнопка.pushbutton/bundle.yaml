@@ -1,0 +1,7 @@
+title:
+  en_us: "Good\nButton"
+  ru: "Хорошая\nкнопка"
+tooltip:
+  en_us: "Reference fixture button for the MM LAB convention checker"
+  ru: "Эталонная кнопка-фикстура для чекера конвенции MM LAB"
+author: "GENPRO LAB"

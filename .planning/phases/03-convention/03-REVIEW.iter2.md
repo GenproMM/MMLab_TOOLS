@@ -9,8 +9,8 @@ files_reviewed_list:
   - tools/tests/test_revit_compat_contract.py
   - tools/tests/test_mm_commands_catalog.py
   - tools/convention_baseline.json
-  - MM LAB.extension/lib/revit_compat.py
-  - MM LAB.extension/MM Lab.tab/bundle.yaml
+  - MM_LAB.extension/lib/revit_compat.py
+  - MM_LAB.extension/MM Lab.tab/bundle.yaml
   - templates/НоваяКнопка.pushbutton/script.py
   - templates/НоваяКнопка.pushbutton/bundle.yaml
   - templates/НоваяКнопка.pushbutton/README.md
@@ -46,14 +46,14 @@ files_reviewed_list:
   - .kilo/commands/mm-new-compat.md
   - .kilo/commands/mm-save-session.md
   - .kilo/commands/mm-update-repo.md
-  - tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/bundle.yaml
-  - tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/Тестовая панель.panel/bundle.yaml
-  - tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/script.py
-  - tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/bundle.yaml
-  - tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/README.md
-  - tools/tests/fixtures/repo_bad/MM LAB.extension/MM Lab.tab/bundle.yaml
-  - tools/tests/fixtures/repo_bad/MM LAB.extension/MM Lab.tab/Плохая панель.panel/bundle.yaml
-  - tools/tests/fixtures/repo_bad/MM LAB.extension/MM Lab.tab/Плохая панель.panel/Плохая кнопка.pushbutton/script.py
+  - tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/bundle.yaml
+  - tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/Тестовая панель.panel/bundle.yaml
+  - tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/script.py
+  - tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/bundle.yaml
+  - tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/README.md
+  - tools/tests/fixtures/repo_bad/MM_LAB.extension/MM Lab.tab/bundle.yaml
+  - tools/tests/fixtures/repo_bad/MM_LAB.extension/MM Lab.tab/Плохая панель.panel/bundle.yaml
+  - tools/tests/fixtures/repo_bad/MM_LAB.extension/MM Lab.tab/Плохая панель.panel/Плохая кнопка.pushbutton/script.py
 findings:
   critical: 0
   warning: 7
@@ -192,7 +192,7 @@ template: "`transaction.Start()` перед `try`; `Commit()` — в `try`;
 
 **File:** `tools/tests/test_revit_compat_contract.py:121-122`
 **Issue:** `py_compile.compile(str(COMPAT_PATH), doraise=True)` writes
-`MM LAB.extension/lib/__pycache__/revit_compat.cpython-*.pyc` into the
+`MM_LAB.extension/lib/__pycache__/revit_compat.cpython-*.pyc` into the
 production extension directory. Confirmed on disk after this review's test
 run. `.gitignore` covers it, but `/mm-doctor` (which runs this suite in
 step 3) declares itself "Диагностика read-only: команда НИЧЕГО не правит"
@@ -211,7 +211,7 @@ def test_compiles(self):
 
 ### WR-06: revit_compat re-detects the Revit version instead of reusing the one validated by require_supported_version
 
-**File:** `MM LAB.extension/lib/revit_compat.py:283-315` (`_units_map`), `352-384` (`create_floor`)
+**File:** `MM_LAB.extension/lib/revit_compat.py:283-315` (`_units_map`), `352-384` (`create_floor`)
 **Issue:** `require_supported_version(command_name, revit=app)` can succeed
 via the explicit `revit` argument, but `_units_map()` and `create_floor()`
 each call `get_revit_version()` with no argument. When
@@ -248,7 +248,7 @@ if args.json:
 
 ### IN-01: iter_count silently consumes one-shot Python iterators
 
-**File:** `MM LAB.extension/lib/revit_compat.py:411-431`
+**File:** `MM_LAB.extension/lib/revit_compat.py:411-431`
 **Issue:** The final fallback counts by iterating. For a Python generator
 (no `len`, no `.Count`) the caller's sequence is exhausted:
 `n = iter_count(gen); for x in gen:` iterates nothing, silently. .NET
@@ -283,7 +283,7 @@ entry must be suffixless.
 
 **File:** `tools/check_convention.py:287-308`
 **Issue:** `lib_dir.glob("*.py")` collects only module files. A future
-first-party package `MM LAB.extension/lib/helpers/__init__.py` would make
+first-party package `MM_LAB.extension/lib/helpers/__init__.py` would make
 `import helpers` a false MM008 error.
 **Fix:** Also add stems of subdirectories containing `__init__.py`.
 
@@ -316,7 +316,7 @@ asserting `description`/`prompt` keys.
 
 ### IN-08: Dangling separator at the end of the tab layout
 
-**File:** `MM LAB.extension/MM Lab.tab/bundle.yaml:7`
+**File:** `MM_LAB.extension/MM Lab.tab/bundle.yaml:7`
 **Issue:** The `- -----` entry is the last item in `layout:` — a vertical
 separator with nothing after it. Harmless to the checker (skipped as
 separator) but serves no purpose on the ribbon and looks like a leftover

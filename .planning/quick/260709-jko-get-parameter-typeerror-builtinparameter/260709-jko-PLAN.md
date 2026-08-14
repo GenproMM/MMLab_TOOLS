@@ -26,13 +26,13 @@ Buttons on the ИОС panel throw errors on click:
   "Пропущено" regardless of actual outcome.
 
 ## Fix
-`MM LAB.extension/lib/ios_common_helpers.py`:
+`MM_LAB.extension/lib/ios_common_helpers.py`:
 - `get_loss_method_parameters`: drop the two nonexistent BuiltInParameter entries,
   keep only `RBS_DUCT_FITTING_LOSS_METHOD_SERVER_PARAM`.
 - `ensure_loss_method_undefined`: return `"updated"` / `"already"` / `"skipped"`
   matching the caller's expected tri-state contract.
 
 ## Verify
-- `python -c "import ast; ast.parse(open('MM LAB.extension/lib/ios_common_helpers.py', encoding='utf-8').read())"`
+- `python -c "import ast; ast.parse(open('MM_LAB.extension/lib/ios_common_helpers.py', encoding='utf-8').read())"`
 - Manual: click "Доп. расход = 1/0" and "Сброс потерь" in Revit — no error dialog,
   correct counts reported.

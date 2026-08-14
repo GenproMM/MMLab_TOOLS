@@ -1,6 +1,7 @@
 # GSD release-map — операционные/перегенерируемые артефакты
 RELEASE_MAP/output/
 RELEASE_MAP/status-journal.csv
+.planning/_legacy/
 
 # Python
 __pycache__/

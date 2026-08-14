@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Контрактный тест публичного API MM LAB.extension/lib/revit_compat.py (план 03-02).
+"""Контрактный тест публичного API MM_LAB.extension/lib/revit_compat.py (план 03-02).
 
 Модуль revit_compat импортировать НЕЛЬЗЯ: он делает ``import clr``,
 доступный только внутри Revit/pyRevit. Поэтому тест читает исходник
@@ -27,7 +27,7 @@ from pathlib import Path
 # tools/tests -> tools -> корень репозитория
 COMPAT_PATH = (
     Path(__file__).resolve().parents[2]
-    / "MM LAB.extension"
+    / "MM_LAB.extension"
     / "lib"
     / "revit_compat.py"
 )
@@ -122,7 +122,7 @@ class TestRevitCompatContract(unittest.TestCase):
 
     def test_compiles(self):
         # cfile — во временный каталог: без него py_compile пишет
-        # __pycache__/ в живое MM LAB.extension/lib (а /mm-doctor,
+        # __pycache__/ в живое MM_LAB.extension/lib (а /mm-doctor,
         # запускающий этот тест, обязан быть read-only).
         with tempfile.TemporaryDirectory() as tmp:
             py_compile.compile(

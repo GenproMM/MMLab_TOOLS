@@ -6,7 +6,7 @@
 
 ```text
 MMLab_TOOLS/
-|-- MM LAB.extension/                 # pyRevit extension payload (tab/panel/command tree)
+|-- MM_LAB.extension/                 # pyRevit extension payload (tab/panel/command tree)
 |   `-- MM Lab.tab/
 |       |-- bundle.yaml               # Tab metadata and panel layout
 |       |-- АРХИТЕКТУРА.panel/        # Architecture discipline commands
@@ -22,15 +22,15 @@ MMLab_TOOLS/
 
 ## Directory Purposes
 
-**`MM LAB.extension/`:**
+**`MM_LAB.extension/`:**
 - Purpose: Runtime-consumed extension package for pyRevit.
 - Contains: `*.tab`, `*.panel`, `*.pushbutton` folders, plus `bundle.yaml`, `script.py`, icons, command READMEs.
-- Key files: `MM LAB.extension/MM Lab.tab/bundle.yaml`, `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`, `MM LAB.extension/MM Lab.tab/ИОС.panel/bundle.yaml`.
+- Key files: `MM_LAB.extension/MM Lab.tab/bundle.yaml`, `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`, `MM_LAB.extension/MM Lab.tab/ИОС.panel/bundle.yaml`.
 
-**`MM LAB.extension/MM Lab.tab/*/*.pushbutton/`:**
+**`MM_LAB.extension/MM Lab.tab/*/*.pushbutton/`:**
 - Purpose: Atomic command modules.
 - Contains: Executable `script.py`, command `bundle.yaml`, optional `README.md`, `icon.png`.
-- Key files: `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`, `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`, `MM LAB.extension/MM Lab.tab/ИОС.panel/Замена CAD-геометрии.pushbutton/script.py`.
+- Key files: `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py`, `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`, `MM_LAB.extension/MM Lab.tab/ИОС.panel/Замена CAD-геометрии.pushbutton/script.py`.
 
 **`lib/`:**
 - Purpose: Vendor directory for Python packages imported by commands.
@@ -51,15 +51,15 @@ MMLab_TOOLS/
 
 **Entry Points:**
 - `extension.json`: Declares extension identity and registration.
-- `MM LAB.extension/MM Lab.tab/bundle.yaml`: Declares tab title and panel layout.
+- `MM_LAB.extension/MM Lab.tab/bundle.yaml`: Declares tab title and panel layout.
 - `.github/get-shit-done/bin/gsd-tools.cjs`: CLI router for workflow operations.
 
 **Configuration:**
-- `MM LAB.extension/MM Lab.tab/*/bundle.yaml`: Panel and command ordering/labels.
+- `MM_LAB.extension/MM Lab.tab/*/bundle.yaml`: Panel and command ordering/labels.
 - `.claude/settings.json`: Claude local settings for workflow behavior.
 
 **Core Logic:**
-- `MM LAB.extension/MM Lab.tab/*/*.pushbutton/script.py`: Revit automation implementation.
+- `MM_LAB.extension/MM Lab.tab/*/*.pushbutton/script.py`: Revit automation implementation.
 - `.github/get-shit-done/bin/lib/*.cjs`: Planning workflow logic modules.
 
 **Testing:**
@@ -79,7 +79,7 @@ MMLab_TOOLS/
 ## Where to Add New Code
 
 **New Feature (Revit command):**
-- Primary code: create new `*.pushbutton` directory under target panel in `MM LAB.extension/MM Lab.tab/<DISCIPLINE>.panel/`.
+- Primary code: create new `*.pushbutton` directory under target panel in `MM_LAB.extension/MM Lab.tab/<DISCIPLINE>.panel/`.
 - Tests: not currently standardized; if adding tests, introduce a dedicated test directory outside runtime extension tree to avoid pyRevit loading side effects.
 
 **New Component/Module (workflow automation):**

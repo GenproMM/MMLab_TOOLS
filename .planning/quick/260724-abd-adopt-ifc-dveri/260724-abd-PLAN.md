@@ -35,7 +35,7 @@ MM LAB через `/mm-adopt-script`. Исходник классифициру�
 
 ## Verify
 ```bash
-py -3 tools/check_convention.py "MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton" --strict
+py -3 tools/check_convention.py "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton" --strict
 py -3 tools/check_convention.py --all --baseline tools/convention_baseline.json
 ```
 Оба — exit 0, 0 ошибок, 0 предупреждений.

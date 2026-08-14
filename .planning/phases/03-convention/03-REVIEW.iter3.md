@@ -9,8 +9,8 @@ files_reviewed_list:
   - tools/tests/test_revit_compat_contract.py
   - tools/tests/test_mm_commands_catalog.py
   - tools/convention_baseline.json
-  - MM LAB.extension/lib/revit_compat.py
-  - MM LAB.extension/MM Lab.tab/bundle.yaml
+  - MM_LAB.extension/lib/revit_compat.py
+  - MM_LAB.extension/MM Lab.tab/bundle.yaml
   - templates/НоваяКнопка.pushbutton/script.py
   - templates/НоваяКнопка.pushbutton/bundle.yaml
   - templates/НоваяКнопка.pushbutton/README.md
@@ -91,10 +91,10 @@ WR-01..WR-07 предыдущего отчёта). Все семь исправ�
 - **WR-05 — исправлено.** `test_compiles`
   (`tools/tests/test_revit_compat_contract.py:123-132`) компилирует через
   `cfile=` во временный каталог. Проверено: после прогона suite каталог
-  `MM LAB.extension/lib/__pycache__/` не создаётся.
+  `MM_LAB.extension/lib/__pycache__/` не создаётся.
 - **WR-06 — исправлено.** `require_supported_version` кеширует
   валидированную версию в `_VALIDATED_VERSION`
-  (`MM LAB.extension/lib/revit_compat.py:137-150`); `_units_map()` и
+  (`MM_LAB.extension/lib/revit_compat.py:137-150`); `_units_map()` и
   `create_floor()` берут версию через `_effective_version()`
   (строки 153-162, 319, 391) — путь с явным аргументом `revit=` больше
   не теряется. Фолбэк на повторную детекцию до первого вызова
@@ -178,7 +178,7 @@ tmp-репо) и `--json --write-baseline` (stdout парсится `json.loads`
 
 ### IN-01: iter_count молча потребляет одноразовые Python-итераторы
 
-**File:** `MM LAB.extension/lib/revit_compat.py:437-457`
+**File:** `MM_LAB.extension/lib/revit_compat.py:437-457`
 **Issue:** (Актуально, без изменений с прошлого обзора.) Финальный фолбэк
 считает элементы итерацией: для генератора без `len`/`.Count`
 последовательность вызывающего исчерпывается — `n = iter_count(gen);
@@ -211,7 +211,7 @@ MM014; один логический дефект даёт несколько с
 
 **File:** `tools/check_convention.py:291-312`
 **Issue:** (Актуально.) `lib_dir.glob("*.py")` собирает только модули.
-Будущий пакет `MM LAB.extension/lib/helpers/__init__.py` сделает
+Будущий пакет `MM_LAB.extension/lib/helpers/__init__.py` сделает
 `import helpers` ложным MM008.
 **Fix:** Добавлять также стемы подкаталогов с `__init__.py`.
 
@@ -242,7 +242,7 @@ tmp-панели — заодно закроет часть WR-09), либо у�
 
 ### IN-08: Висячий разделитель в конце layout вкладки
 
-**File:** `MM LAB.extension/MM Lab.tab/bundle.yaml:7`
+**File:** `MM_LAB.extension/MM Lab.tab/bundle.yaml:7`
 **Issue:** (Актуально.) `- -----` — последняя запись `layout:`,
 вертикальный разделитель, после которого ничего нет.
 **Fix:** Удалить хвостовую строку `- -----`.

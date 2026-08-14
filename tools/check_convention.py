@@ -20,7 +20,7 @@ import/exec/eval чужого кода). Переиспользуется ком
 * ``PATHS`` — папки ``*.pushbutton`` ИЛИ одиночные ``*.py`` (режим «сырого
   скрипта»: правила уровня файла MM000–MM004 и AST-правила MM008–MM012,
   MM014; структурные MM005–MM007, MM013 пропускаются).
-* ``--all`` — обход ``<root>/MM LAB.extension/MM Lab.tab/**/*.pushbutton``
+* ``--all`` — обход ``<root>/MM_LAB.extension/MM Lab.tab/**/*.pushbutton``
   плюс проверка орфанов layout в tab- и panel-``bundle.yaml``. Папка
   ``templates/`` в ``--all`` не входит (проверяется явным путём).
 * ``--root`` — корень репозитория; по умолчанию текущая директория.
@@ -60,7 +60,7 @@ MM007 error    (а) кнопка зарегистрирована в layout ро
 MM008 error    корень абсолютного импорта входит в белый список
                ``allowed_import_roots``: stdlib (sys.stdlib_module_names),
                хост-платформа (clr/System/Autodesk/pyrevit/Microsoft),
-               first-party ``<root>/MM LAB.extension/lib/*.py``, vendored
+               first-party ``<root>/MM_LAB.extension/lib/*.py``, vendored
                (openpyxl, et_xmlfile); относительные импорты пропускаются
 MM009 error    запрещён wildcard-импорт ``from X import *``
 MM010 warning  вызов ``LookupParameter("строковый литерал")`` — используй
@@ -109,7 +109,7 @@ CODING_LINE = "# -*- coding: utf-8 -*-"
 BOM = b"\xef\xbb\xbf"
 DOCSTRING_MARKERS = ("Совместимость:", "Зависимости:")
 
-EXTENSION_DIR_NAME = "MM LAB.extension"
+EXTENSION_DIR_NAME = "MM_LAB.extension"
 TAB_DIR_NAME = "MM Lab.tab"
 LIB_DIR_NAME = "lib"
 PUSHBUTTON_SUFFIX = ".pushbutton"
@@ -303,7 +303,7 @@ def allowed_import_roots(root) -> set[str]:
 
     Состав: stdlib (``sys.stdlib_module_names``, Python >= 3.10) +
     хост-платформа (clr/System/Autodesk/pyrevit/Microsoft) + first-party
-    модули ``<root>/MM LAB.extension/lib/*.py`` (динамически, ТОЛЬКО стемы
+    модули ``<root>/MM_LAB.extension/lib/*.py`` (динамически, ТОЛЬКО стемы
     имён файлов — содержимое не читается и не исполняется, гейт T-03-08) +
     vendored (openpyxl, et_xmlfile).
 
@@ -653,7 +653,7 @@ def check_layouts(root) -> list[Violation]:
 
 
 def iter_pushbuttons(root) -> list[Path]:
-    """Все папки ``*.pushbutton`` в ``<root>/MM LAB.extension/MM Lab.tab``.
+    """Все папки ``*.pushbutton`` в ``<root>/MM_LAB.extension/MM Lab.tab``.
 
     Пути за пределами root (симлинки и т.п.) отбрасываются (гейт V5).
     Кандидаты, вложенные в мусорные каталоги (``.vs/``, ``__pycache__/``)
@@ -773,7 +773,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--all", action="store_true",
-        help=("проверить все кнопки в <root>/MM LAB.extension/MM Lab.tab "
+        help=("проверить все кнопки в <root>/MM_LAB.extension/MM Lab.tab "
               "и орфаны layout"),
     )
     parser.add_argument(

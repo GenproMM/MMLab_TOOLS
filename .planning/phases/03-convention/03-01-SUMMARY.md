@@ -27,14 +27,14 @@ key-files:
   created:
     - tools/check_convention.py
     - tools/tests/test_check_convention.py
-    - "tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/bundle.yaml"
-    - "tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/Тестовая панель.panel/bundle.yaml"
-    - "tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/script.py"
-    - "tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/bundle.yaml"
-    - "tools/tests/fixtures/repo_ok/MM LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/README.md"
-    - "tools/tests/fixtures/repo_bad/MM LAB.extension/MM Lab.tab/bundle.yaml"
-    - "tools/tests/fixtures/repo_bad/MM LAB.extension/MM Lab.tab/Плохая панель.panel/bundle.yaml"
-    - "tools/tests/fixtures/repo_bad/MM LAB.extension/MM Lab.tab/Плохая панель.panel/Плохая кнопка.pushbutton/script.py"
+    - "tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/bundle.yaml"
+    - "tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/Тестовая панель.panel/bundle.yaml"
+    - "tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/script.py"
+    - "tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/bundle.yaml"
+    - "tools/tests/fixtures/repo_ok/MM_LAB.extension/MM Lab.tab/Тестовая панель.panel/Хорошая кнопка.pushbutton/README.md"
+    - "tools/tests/fixtures/repo_bad/MM_LAB.extension/MM Lab.tab/bundle.yaml"
+    - "tools/tests/fixtures/repo_bad/MM_LAB.extension/MM Lab.tab/Плохая панель.panel/bundle.yaml"
+    - "tools/tests/fixtures/repo_bad/MM_LAB.extension/MM Lab.tab/Плохая панель.panel/Плохая кнопка.pushbutton/script.py"
   modified: []
 
 key-decisions:

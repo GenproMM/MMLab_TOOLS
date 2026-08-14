@@ -17,9 +17,9 @@ status: complete
 `tools/convention_baseline.json`.
 
 Files changed:
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton/script.py`
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton/bundle.yaml`
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton/README.md`
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton/icon.png`
-- `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton/script.py`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton/bundle.yaml`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton/README.md`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton/icon.png`
+- `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/bundle.yaml`
 - `tools/convention_baseline.json`

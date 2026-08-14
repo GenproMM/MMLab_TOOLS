@@ -7,14 +7,14 @@
 ## Evidence
 
 1. Shared module exists:
-- MM LAB.extension/lib/ios_common_helpers.py
+- MM_LAB.extension/lib/ios_common_helpers.py
 
 2. Target scripts migrated to shared imports:
-- MM LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 0.pushbutton/script.py
-- MM LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 1.pushbutton/script.py
-- MM LAB.extension/MM Lab.tab/ИОС.panel/Конфузор-Диффузор.pushbutton/script.py
-- MM LAB.extension/MM Lab.tab/ИОС.panel/Приточный по классификации.pushbutton/script.py
-- MM LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py
+- MM_LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 0.pushbutton/script.py
+- MM_LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 1.pushbutton/script.py
+- MM_LAB.extension/MM Lab.tab/ИОС.panel/Конфузор-Диффузор.pushbutton/script.py
+- MM_LAB.extension/MM Lab.tab/ИОС.panel/Приточный по классификации.pushbutton/script.py
+- MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton/script.py
 
 3. Structural verification completed:
 - Локальные дубли helper-функций в целевых script.py удалены.

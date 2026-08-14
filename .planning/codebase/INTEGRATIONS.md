@@ -6,10 +6,10 @@
 
 **Design/BIM Host APIs:**
 - Autodesk Revit API - primary automation surface for element querying, transactions, parameters, and UI dialogs.
-  - SDK/Client: .NET assemblies via `clr.AddReference("RevitAPI")` and `clr.AddReference("RevitAPIUI")` in files such as `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py` and `MM LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 0.pushbutton/script.py`.
+  - SDK/Client: .NET assemblies via `clr.AddReference("RevitAPI")` and `clr.AddReference("RevitAPIUI")` in files such as `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py` and `MM_LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 0.pushbutton/script.py`.
   - Auth: Host-process trust model inside running Revit session (no explicit token flow in repository scripts).
 - pyRevit runtime services - UI helpers and script output/forms wrappers.
-  - SDK/Client: `from pyrevit import forms, script, revit` in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py` and `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Проверка зон.pushbutton/script.py`.
+  - SDK/Client: `from pyrevit import forms, script, revit` in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton/script.py` and `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Проверка зон.pushbutton/script.py`.
 
 **Developer Workflow Services (GSD CLI):**
 - Brave Search API - optional web search provider for planning/research commands.
@@ -28,7 +28,7 @@
 
 **File Storage:**
 - Local filesystem only.
-- Export outputs include CSV/XLSX writes from pyRevit scripts, e.g. CSV save path logic in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py` and workbook generation via `openpyxl` in `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`.
+- Export outputs include CSV/XLSX writes from pyRevit scripts, e.g. CSV save path logic in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Мокрые зоны.pushbutton/script.py` and workbook generation via `openpyxl` in `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`.
 - Project planning state stored as Markdown/JSON under `.planning/**` and managed by `.github/get-shit-done/bin/gsd-tools.cjs`.
 
 **Caching:**
@@ -39,7 +39,7 @@
 
 **Auth Provider:**
 - Revit/pyRevit session context for extension commands.
-  - Implementation: scripts access active document through `__revit__.ActiveUIDocument` in multiple tools such as `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py`.
+  - Implementation: scripts access active document through `__revit__.ActiveUIDocument` in multiple tools such as `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Высота этажа.pushbutton/script.py`.
 - For optional GSD web search, simple API-key authentication (`BRAVE_API_KEY`) in `.github/get-shit-done/bin/lib/commands.cjs`.
 
 ## Monitoring & Observability
@@ -48,13 +48,13 @@
 - None detected (no Sentry/New Relic/AppInsights SDK usage).
 
 **Logs:**
-- User-facing runtime feedback is dialog-based through Revit `TaskDialog` or WinForms dialogs in scripts like `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`.
+- User-facing runtime feedback is dialog-based through Revit `TaskDialog` or WinForms dialogs in scripts like `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton/script.py`.
 - CLI output is stdout/stderr JSON/text from `.github/get-shit-done/bin/gsd-tools.cjs`.
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Not server-hosted; deployed as a local pyRevit extension directory (`MM LAB.extension/**`).
+- Not server-hosted; deployed as a local pyRevit extension directory (`MM_LAB.extension/**`).
 
 **CI Pipeline:**
 - None detected (`.github/workflows/**` absent in repository scan).

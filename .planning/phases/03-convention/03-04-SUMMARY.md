@@ -8,12 +8,12 @@ requires:
   - phase: 03-convention (планы 03-01, 03-03)
     provides: чекер tools/check_convention.py (MM000–MM014, --strict/--baseline/--write-baseline, CLI-контракт)
   - phase: 03-convention (план 03-02)
-    provides: MM LAB.extension/lib/revit_compat.py (require_supported_version, iter_count)
+    provides: MM_LAB.extension/lib/revit_compat.py (require_supported_version, iter_count)
 provides:
   - templates/НоваяКнопка.pushbutton/ — копируемый скелет кнопки (script.py + bundle.yaml + README.md), strict-чекер зелёный
   - Канонический lib-бутстрап (D-15) зафиксирован в шаблоне единственной формой
   - tools/convention_baseline.json — grandfathered legacy-кнопки (21 юнит, 202 нарушения из фактического аудита)
-  - Чистый MM LAB.extension/MM Lab.tab/bundle.yaml — без орфана «ВОР» и хвостовых пробелов
+  - Чистый MM_LAB.extension/MM Lab.tab/bundle.yaml — без орфана «ВОР» и хвостовых пробелов
   - Фазовый инвариант — py -3 tools/check_convention.py --all --baseline tools/convention_baseline.json -> exit 0
 affects: [03-05 AGENTS.md, 03-06 mm-new-button, 03-06 mm-adopt-script, 03-06 mm-check, 03-07 адаптеры]
 
@@ -30,7 +30,7 @@ key-files:
     - "templates/НоваяКнопка.pushbutton/README.md"
     - tools/convention_baseline.json
   modified:
-    - "MM LAB.extension/MM Lab.tab/bundle.yaml"
+    - "MM_LAB.extension/MM Lab.tab/bundle.yaml"
 
 key-decisions:
   - "Baseline генерируется только фактическим аудитом --write-baseline (не переписыванием цифр из RESEARCH): 21 юнит, 202 нарушения; записи снимаются при адаптации кнопки (/mm-adopt-script, план 03-06)"
@@ -125,7 +125,7 @@ Each task was committed atomically:
 - `templates/НоваяКнопка.pushbutton/bundle.yaml` - каркас title/tooltip (ru+en_us) + author "GENPRO LAB" с TODO
 - `templates/НоваяКнопка.pushbutton/README.md` - каркас разделов по образцу «Мокрых зон» + «Иконка» (icon.png ~96×96) + «Как использовать шаблон» (ручной путь и /mm-new-button)
 - `tools/convention_baseline.json` - grandfathered-список: units {путь юнита -> коды правил}, generated, note
-- `MM LAB.extension/MM Lab.tab/bundle.yaml` - удалён орфан «ВОР», убраны хвостовые пробелы и финальная строка из пробелов
+- `MM_LAB.extension/MM Lab.tab/bundle.yaml` - удалён орфан «ВОР», убраны хвостовые пробелы и финальная строка из пробелов
 
 ## Decisions Made
 

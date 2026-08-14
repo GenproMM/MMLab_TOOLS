@@ -55,7 +55,7 @@ Must-haves объединены из frontmatter всех 7 планов (ROADMA
 | 13 | Хорошая фикстура по-прежнему без нарушений (03-03) | ✓ VERIFIED | exit 0 |
 | 14 | AST-правила в режиме сырого .py (03-03) | ✓ VERIFIED | tmp-скрипт `import requests` → MM008; MM005/006/007 не выдаются |
 | 15 | Белый список: stdlib + clr/System/Autodesk/pyrevit + lib + vendored (03-03) | ✓ VERIFIED | allowed_import_roots с sys.stdlib_module_names; тесты allows_host_and_stdlib/first_party зелёные |
-| 16 | templates/ вне MM Lab.tab, pyRevit не грузит (03-04) | ✓ VERIFIED | Папка в корне репо, вне MM LAB.extension (D-14) |
+| 16 | templates/ вне MM Lab.tab, pyRevit не грузит (03-04) | ✓ VERIFIED | Папка в корне репо, вне MM_LAB.extension (D-14) |
 | 17 | Шаблон — минимальная рабочая кнопка с TODO (03-04) | ✓ VERIFIED | 86 строк: шапка-канон → бутстрап D-15 → revit_compat → Transaction Commit/RollBack+raise → TaskDialog; 8 TODO; EXTENSION_ROOT отсутствует |
 | 18 | Шаблон `--strict` → exit 0 (03-04) | ✓ VERIFIED | Живой прогон: exit 0 |
 | 19 | `--all --baseline` → exit 0 (03-04) | ✓ VERIFIED | Живой прогон: 17 юнитов, 0 ошибок / 0 предупреждений; без baseline → exit 1 (baseline фильтрует реальные нарушения) |
@@ -84,11 +84,11 @@ Must-haves объединены из frontmatter всех 7 планов (ROADMA
 | `tools/check_convention.py` | ≥250 строк, MM007, stdlib_module_names | ✓ VERIFIED | 923 строки; 15 правил MM000–MM014; без yaml/exec/eval; wired: импортируется тестами + baseline + процедурами |
 | `tools/tests/test_check_convention.py` | ≥150 строк, write_baseline | ✓ VERIFIED | 592 строки; import check_convention (строка 39); в составе 56 зелёных тестов |
 | `tools/tests/fixtures/repo_ok/**`, `repo_bad/**` | эталон + нарушитель | ✓ VERIFIED | Все 5 файлов repo_ok; BOM-гард repo_bad (EF BB BF); плохая фикстура парсится ast |
-| `MM LAB.extension/lib/revit_compat.py` | ≥200 строк, SUPPORTED_VERSIONS = (2020, 2022, 2024) | ✓ VERIFIED | 478 строк; 13 публичных функций; getattr(builtins, "__revit__") каскад; шапка-канон без BOM |
+| `MM_LAB.extension/lib/revit_compat.py` | ≥200 строк, SUPPORTED_VERSIONS = (2020, 2022, 2024) | ✓ VERIFIED | 478 строк; 13 публичных функций; getattr(builtins, "__revit__") каскад; шапка-канон без BOM |
 | `tools/tests/test_revit_compat_contract.py` | ≥50 строк, require_supported_version, ast.parse | ✓ VERIFIED | 136 строк; ast-контракт без import revit_compat |
 | `templates/НоваяКнопка.pushbutton/` (3 файла) | ≥60 строк script, tooltip, ## Описание | ✓ VERIFIED | script.py 86 строк + import revit_compat; bundle.yaml title/tooltip ru+en_us + author; README все разделы |
 | `tools/convention_baseline.json` | units | ✓ VERIFIED | generated/note/units (15 юнитов, 66 кодов) + pending_adoption (2 IFC-кнопки — доработка ревью); templates/ не попал; .vs-мусора нет |
-| `MM LAB.extension/MM Lab.tab/bundle.yaml` | без «ВОР» | ✓ VERIFIED | Чистый layout, рабочее дерево без диффа |
+| `MM_LAB.extension/MM Lab.tab/bundle.yaml` | без «ВОР» | ✓ VERIFIED | Чистый layout, рабочее дерево без диффа |
 | `AGENTS.md` | ≥180 строк, ## Обязательные правила кода | ✓ VERIFIED | 323 строки; таблица правил = RULES чекера до severity |
 | `CLAUDE.md`, `GEMINI.md`, `.kilocode/rules/00-mmlab.md` | @AGENTS.md / AGENTS.md | ✓ VERIFIED | Все три указателя; .claude/CLAUDE.md не изменён (git status пуст) |
 | `agents/commands/mm-*.md` (7) | ≥80/≥40 строк, маркеры | ✓ VERIFIED | Все 7; adopt-script 170, save-session 107 строк; все контент-гейты планов пройдены |
@@ -137,7 +137,7 @@ Must-haves объединены из frontmatter всех 7 планов (ROADMA
 | Baseline roundtrip | write → filter → strict | 0 → 0 → 1 | ✓ PASS |
 | Slash-команды /mm-* вживую | — | интерактивная сессия | ? SKIP → human |
 
-Примечание: `__pycache__`, создаваемый py_compile-тестом в `MM LAB.extension/lib/`, удалён после прогона (задокументированный pitfall фазы; состояние до прогона восстановлено).
+Примечание: `__pycache__`, создаваемый py_compile-тестом в `MM_LAB.extension/lib/`, удалён после прогона (задокументированный pitfall фазы; состояние до прогона восстановлено).
 
 ### Requirements Coverage
 
@@ -175,7 +175,7 @@ REQUIREMENTS.md генерируется из «Карты релизов» и �
 
 #### 2. /mm-adopt-script на IFC_Двери — ревью-гейт (CONV-ADAPT)
 
-**Test:** В Claude Code выполнить `/mm-adopt-script` на `MM LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton` (untracked, намеренно оставлен как UAT-вход).
+**Test:** В Claude Code выполнить `/mm-adopt-script` на `MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/IFC_Двери.pushbutton` (untracked, намеренно оставлен как UAT-вход).
 **Expected:** Чекер отработал, панель спрошена с обоснованием (D-10), сводка правок и diff показаны; без явного «да» регистрации в bundle.yaml НЕТ (D-08). После «да» — регистрация + снятие записи из pending_adoption/baseline.
 **Why human:** Блокирующий гейт одобрения проверяется только живой интерактивной сессией.
 

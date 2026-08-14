@@ -20,7 +20,7 @@ import os
 import sys
 
 _SCRIPT_DIR = os.path.dirname(__file__)
-# pushbutton -> panel -> tab -> MM LAB.extension
+# pushbutton -> panel -> tab -> MM_LAB.extension
 _EXTENSION_DIR = os.path.normpath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
 _LIB_DIR = os.path.join(_EXTENSION_DIR, "lib")
 if os.path.isdir(_LIB_DIR) and _LIB_DIR not in sys.path:
