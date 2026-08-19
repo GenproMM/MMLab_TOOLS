@@ -78,7 +78,8 @@ def main(doc):
                 part_type_error_count += 1
                 continue
 
-            if normalize_text(to_text(part_type)) != "transition":
+            part_type_text = normalize_text(to_text(part_type))
+            if "transition" not in part_type_text:
                 not_transition_count += 1
                 continue
 
@@ -126,7 +127,7 @@ def main(doc):
         raise
 
     total = confuser_count + diffuser_count
-    debug_msg = u"Классифицировано переходов: {0}\nКонфузоров: {1}\nДиффузоров: {2}\n\nДебаг (пропущено по причинам):\nНет MEPModel: {3}\nОшибка PartType: {4}\nНе transition: {5}\n≠2 коннектора: {6}\nНет In/Out: {7}\nПлохая площадь: {8}\nНет/не writable параметра: {9}".format(
+    debug_msg = u"Классифицировано переходов: {0}\nКонфузоров: {1}\nДиффузоров: {2}\n\nДебаг (пропущено по причинам):\nНет MEPModel: {3}\nОшибка PartType: {4}\nНе transition: {5}\n≠2 коннектора: {6}\nНет In/Out: {7}\nПлохая площадь: {8}\nНет/не writable параметра: {9}\n\n[Проверить ios_common_helpers.py: to_text() + normalize_text()]".format(
         total,
         confuser_count,
         diffuser_count,
