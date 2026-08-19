@@ -28,6 +28,11 @@ except NameError:
     text_type = str
 
 
+# Метка версии модуля: помогает поймать ситуацию, когда pyRevit держит
+# в sys.modules старую копию lib и правки не подхватились без перезапуска.
+LIB_VERSION = u"2026-08-19-connfix"
+
+
 UNDEFINED_LABELS = set([u"неопределено", u"notdefined"])
 UNDEFINED_SERVER_LABELS = set([u"неопределено", u"notdefined", u"undefined", u"none"])
 SUPPLY_LABELS = set([u"supplyair", u"приток", u"приточныйвоздух", u"приточный"])

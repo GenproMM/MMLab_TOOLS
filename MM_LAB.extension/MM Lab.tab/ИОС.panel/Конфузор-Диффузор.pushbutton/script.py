@@ -41,6 +41,12 @@ from ios_common_helpers import nearly_equal
 from ios_common_helpers import normalize_text
 from ios_common_helpers import to_text
 
+try:
+    from ios_common_helpers import LIB_VERSION
+except ImportError:
+    # Метки нет — значит pyRevit отдал старую копию lib из sys.modules.
+    LIB_VERSION = u"УСТАРЕВШАЯ (нужен перезапуск Revit)"
+
 
 COMMAND_NAME = u"Конфузор/Диффузор"
 AREA_TOLERANCE = 1e-6
@@ -59,6 +65,7 @@ def main(doc):
     no_in_out_count = 0
     bad_area_count = 0
     no_parameter_count = 0
+    transition_signatures = {}
 
     fittings = collect_elements(doc, BuiltInCategory.OST_DuctFitting)
 
@@ -82,6 +89,22 @@ def main(doc):
                 continue
 
             hvac_connectors = get_hvac_connectors(family_instance)
+
+            # Диагностика: срез по коннекторам каждого перехода — сколько их
+            # физически, сколько отдал хелпер и какие у них направления.
+            raw_connectors = []
+            try:
+                for raw_connector in family_instance.MEPModel.ConnectorManager.Connectors:
+                    raw_connectors.append(raw_connector)
+            except Exception:
+                pass
+            signature = u"сырых={0} hvac={1} dirs={2}".format(
+                len(raw_connectors),
+                len(hvac_connectors),
+                u"+".join(sorted(to_text(item.Direction) for item in raw_connectors)),
+            )
+            transition_signatures[signature] = transition_signatures.get(signature, 0) + 1
+
             if len(hvac_connectors) != 2:
                 wrong_connector_count += 1
                 continue
@@ -136,6 +159,8 @@ def main(doc):
     )
 
     lines = [
+        u"Версия lib: {0}".format(LIB_VERSION),
+        u"",
         u"Классифицировано переходов: {0}".format(total),
         u"Конфузоров: {0}".format(confuser_count),
         u"Диффузоров: {0}".format(diffuser_count),
@@ -149,6 +174,13 @@ def main(doc):
         u"  нулевая/равная площадь: {0}".format(bad_area_count),
         u"  нет параметра «Конфузор»: {0}".format(no_parameter_count),
     ]
+
+    if transition_signatures:
+        lines.append(u"")
+        lines.append(u"Коннекторы переходов:")
+        ranked = sorted(transition_signatures.items(), key=lambda kv: kv[1], reverse=True)
+        for signature, count in ranked[:8]:
+            lines.append(u"  {0} -> {1}".format(signature, count))
 
     TaskDialog.Show(COMMAND_NAME, u"\n".join(lines))
 
