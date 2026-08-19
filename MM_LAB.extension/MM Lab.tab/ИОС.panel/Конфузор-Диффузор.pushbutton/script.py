@@ -50,83 +50,105 @@ def main(doc):
     """Точка входа: классифицирует переходы воздуховодов как конфузор/диффузор."""
     revit_compat.require_supported_version(COMMAND_NAME)
 
-    fittings = collect_elements(doc, BuiltInCategory.OST_DuctFitting)
-
+    confuser_count = 0
+    diffuser_count = 0
     no_mepmodel_count = 0
     part_type_error_count = 0
-    part_type_counts = {}
-    probe_lines = []
-    connector_probe = []
+    not_transition_count = 0
+    wrong_connector_count = 0
+    no_in_out_count = 0
+    bad_area_count = 0
+    no_parameter_count = 0
 
-    for element in fittings:
-        family_instance = element if hasattr(element, "MEPModel") else None
-        if family_instance is None or family_instance.MEPModel is None:
-            no_mepmodel_count += 1
-            continue
+    fittings = collect_elements(doc, BuiltInCategory.OST_DuctFitting)
 
-        try:
-            part_type = family_instance.MEPModel.PartType
-        except Exception as ex:
-            part_type_error_count += 1
-            if not probe_lines:
-                probe_lines.append(u"PartType бросает: {0}".format(ex))
-            continue
+    transaction = Transaction(doc, COMMAND_NAME)
+    transaction.Start()
+    try:
+        for element in fittings:
+            family_instance = element if hasattr(element, "MEPModel") else None
+            if family_instance is None or family_instance.MEPModel is None:
+                no_mepmodel_count += 1
+                continue
 
-        # Проба аксессоров на первом успешно прочитанном элементе.
-        if not probe_lines:
-            probe_lines.append(u"type = {0}".format(type(part_type).__name__))
             try:
-                probe_lines.append(u"str() = [{0}]".format(str(part_type)))
-            except Exception as ex:
-                probe_lines.append(u"str() ОШИБКА: {0}".format(ex))
-            try:
-                probe_lines.append(u"ToString() = [{0}]".format(part_type.ToString()))
-            except Exception as ex:
-                probe_lines.append(u"ToString() ОШИБКА: {0}".format(ex))
-            try:
-                probe_lines.append(u"to_text() = [{0}]".format(to_text(part_type)))
-            except Exception as ex:
-                probe_lines.append(u"to_text() ОШИБКА: {0}".format(ex))
-            try:
-                probe_lines.append(u"normalize = [{0}]".format(normalize_text(to_text(part_type))))
-            except Exception as ex:
-                probe_lines.append(u"normalize ОШИБКА: {0}".format(ex))
+                part_type = family_instance.MEPModel.PartType
+            except Exception:
+                part_type_error_count += 1
+                continue
 
-        try:
-            key = part_type.ToString()
-        except Exception:
-            key = to_text(part_type)
-        part_type_counts[key] = part_type_counts.get(key, 0) + 1
+            if normalize_text(to_text(part_type)) != "transition":
+                not_transition_count += 1
+                continue
 
-        # Для первого элемента, похожего на переход, снимаем картину коннекторов.
-        if not connector_probe and "transition" in normalize_text(key):
-            raw = []
-            manager = family_instance.MEPModel.ConnectorManager
-            for connector in manager.Connectors:
-                raw.append(u"  domain={0} dir={1}".format(connector.Domain, connector.Direction))
-            connector_probe.append(u"Сырых коннекторов: {0}".format(len(raw)))
-            connector_probe.extend(raw)
-            connector_probe.append(
-                u"get_hvac_connectors вернул: {0}".format(len(get_hvac_connectors(family_instance)))
-            )
+            hvac_connectors = get_hvac_connectors(family_instance)
+            if len(hvac_connectors) != 2:
+                wrong_connector_count += 1
+                continue
 
-    lines = [u"ДИАГНОСТИКА (модель не изменялась)", u""]
-    lines.append(u"Всего фитингов: {0}".format(len(fittings)))
-    lines.append(u"Нет MEPModel: {0}".format(no_mepmodel_count))
-    lines.append(u"Ошибка PartType: {0}".format(part_type_error_count))
-    lines.append(u"")
-    lines.append(u"Аксессоры на 1-м элементе:")
-    lines.extend(probe_lines)
-    lines.append(u"")
-    lines.append(u"Различные PartType (топ-12):")
-    ranked = sorted(part_type_counts.items(), key=lambda kv: kv[1], reverse=True)
-    for key, count in ranked[:12]:
-        lines.append(u"  [{0}] = {1}".format(key, count))
+            in_connector = None
+            out_connector = None
+            for connector in hvac_connectors:
+                if connector.Direction == FlowDirectionType.In:
+                    in_connector = connector
+                elif connector.Direction == FlowDirectionType.Out:
+                    out_connector = connector
 
-    if connector_probe:
-        lines.append(u"")
-        lines.append(u"Коннекторы 1-го перехода:")
-        lines.extend(connector_probe)
+            if in_connector is None or out_connector is None:
+                no_in_out_count += 1
+                continue
+
+            in_area = get_connector_area(in_connector)
+            out_area = get_connector_area(out_connector)
+            if in_area <= 0.0 or out_area <= 0.0 or nearly_equal(in_area, out_area, AREA_TOLERANCE):
+                bad_area_count += 1
+                continue
+
+            confuser_parameter = get_parameter_by_names(family_instance, u"Конфузор", u"Confuser")
+            if not is_writable(confuser_parameter) or confuser_parameter.StorageType != StorageType.Integer:
+                no_parameter_count += 1
+                continue
+
+            is_confuser = in_area > out_area
+            new_value = 1 if is_confuser else 0
+            if confuser_parameter.AsInteger() != new_value:
+                confuser_parameter.Set(new_value)
+
+            if is_confuser:
+                confuser_count += 1
+            else:
+                diffuser_count += 1
+
+        transaction.Commit()
+    except Exception:
+        transaction.RollBack()
+        raise
+
+    total = confuser_count + diffuser_count
+    skipped_total = (
+        no_mepmodel_count
+        + part_type_error_count
+        + not_transition_count
+        + wrong_connector_count
+        + no_in_out_count
+        + bad_area_count
+        + no_parameter_count
+    )
+
+    lines = [
+        u"Классифицировано переходов: {0}".format(total),
+        u"Конфузоров: {0}".format(confuser_count),
+        u"Диффузоров: {0}".format(diffuser_count),
+        u"",
+        u"Пропущено всего: {0}".format(skipped_total),
+        u"  нет MEPModel: {0}".format(no_mepmodel_count),
+        u"  ошибка PartType: {0}".format(part_type_error_count),
+        u"  не переход: {0}".format(not_transition_count),
+        u"  не 2 коннектора: {0}".format(wrong_connector_count),
+        u"  нет пары In/Out: {0}".format(no_in_out_count),
+        u"  нулевая/равная площадь: {0}".format(bad_area_count),
+        u"  нет параметра «Конфузор»: {0}".format(no_parameter_count),
+    ]
 
     TaskDialog.Show(COMMAND_NAME, u"\n".join(lines))
 

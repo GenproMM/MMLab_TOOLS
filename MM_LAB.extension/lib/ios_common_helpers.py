@@ -385,9 +385,12 @@ def get_hvac_connectors(element):
     if manager is None:
         return []
 
+    # Возвращаются ВСЕ HVAC-коннекторы, включая входные: фильтр по Direction
+    # отбрасывал In и ломал вызывающих, которым нужна пара In/Out
+    # (например, классификация переходов конфузор/диффузор).
     result = []
     for connector in manager.Connectors:
-        if connector.Domain == Domain.DomainHvac and connector.Direction != FlowDirectionType.In:
+        if connector.Domain == Domain.DomainHvac:
             result.append(connector)
 
     return result
