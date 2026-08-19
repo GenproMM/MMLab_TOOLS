@@ -78,8 +78,12 @@ def main(doc):
                 part_type_error_count += 1
                 continue
 
-            part_type_text = normalize_text(to_text(part_type))
-            if "transition" not in part_type_text:
+            try:
+                part_type_name = part_type.ToString().split('.')[-1]
+            except Exception:
+                part_type_name = to_text(part_type)
+
+            if normalize_text(part_type_name) != "transition":
                 not_transition_count += 1
                 continue
 
