@@ -1,5 +1,7 @@
 title:
+  en_us: "Confuser\nDiffuser"
   ru: "Конфузор\nДиффузор"
 tooltip:
+  en_us: "Analyzes duct transitions, compares connector areas and writes the result to the Confuser parameter"
   ru: "Анализирует переходы воздуховодов, сравнивает площади коннекторов и записывает результат в параметр «Конфузор»."
-author: "MM LAB"
+author: "GENPRO LAB"
