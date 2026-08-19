@@ -53,6 +53,13 @@ def main(doc):
     confuser_count = 0
     diffuser_count = 0
     skipped_count = 0
+    no_mepmodel_count = 0
+    part_type_error_count = 0
+    not_transition_count = 0
+    wrong_connector_count = 0
+    no_in_out_count = 0
+    bad_area_count = 0
+    no_parameter_count = 0
 
     fittings = collect_elements(doc, BuiltInCategory.OST_DuctFitting)
 
@@ -62,22 +69,22 @@ def main(doc):
         for element in fittings:
             family_instance = element if hasattr(element, "MEPModel") else None
             if family_instance is None or family_instance.MEPModel is None:
-                skipped_count += 1
+                no_mepmodel_count += 1
                 continue
 
             try:
                 part_type = family_instance.MEPModel.PartType
             except Exception:
-                skipped_count += 1
+                part_type_error_count += 1
                 continue
 
             if normalize_text(to_text(part_type)) != "transition":
-                skipped_count += 1
+                not_transition_count += 1
                 continue
 
             hvac_connectors = get_hvac_connectors(family_instance)
             if len(hvac_connectors) != 2:
-                skipped_count += 1
+                wrong_connector_count += 1
                 continue
 
             in_connector = None
@@ -89,18 +96,18 @@ def main(doc):
                     out_connector = connector
 
             if in_connector is None or out_connector is None:
-                skipped_count += 1
+                no_in_out_count += 1
                 continue
 
             in_area = get_connector_area(in_connector)
             out_area = get_connector_area(out_connector)
             if in_area <= 0.0 or out_area <= 0.0 or nearly_equal(in_area, out_area, AREA_TOLERANCE):
-                skipped_count += 1
+                bad_area_count += 1
                 continue
 
             confuser_parameter = get_parameter_by_names(family_instance, u"Конфузор", u"Confuser")
             if not is_writable(confuser_parameter) or confuser_parameter.StorageType != StorageType.Integer:
-                skipped_count += 1
+                no_parameter_count += 1
                 continue
 
             is_confuser = in_area > out_area
@@ -119,15 +126,19 @@ def main(doc):
         raise
 
     total = confuser_count + diffuser_count
-    TaskDialog.Show(
-        COMMAND_NAME,
-        u"Классифицировано переходов: {0}\nКонфузоров: {1}\nДиффузоров: {2}\nПропущено: {3}".format(
-            total,
-            confuser_count,
-            diffuser_count,
-            skipped_count,
-        ),
+    debug_msg = u"Классифицировано переходов: {0}\nКонфузоров: {1}\nДиффузоров: {2}\n\nДебаг (пропущено по причинам):\nНет MEPModel: {3}\nОшибка PartType: {4}\nНе transition: {5}\n≠2 коннектора: {6}\nНет In/Out: {7}\nПлохая площадь: {8}\nНет/не writable параметра: {9}".format(
+        total,
+        confuser_count,
+        diffuser_count,
+        no_mepmodel_count,
+        part_type_error_count,
+        not_transition_count,
+        wrong_connector_count,
+        no_in_out_count,
+        bad_area_count,
+        no_parameter_count,
     )
+    TaskDialog.Show(COMMAND_NAME, debug_msg)
 
 
 def _entry():
