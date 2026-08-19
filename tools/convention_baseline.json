@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24",
+  "generated": "2026-08-19",
   "note": "Grandfathered legacy-кнопки (units) и временные допуски ещё не принятых кнопок (pending_adoption). При адаптации кнопки удали её запись.",
   "units": {
     "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/ВОР_СсылкаНаЛист.pushbutton": [
@@ -47,12 +47,6 @@
       "MM013"
     ],
     "MM_LAB.extension/MM Lab.tab/АРХИТЕКТУРА.panel/Экспорт ПСО.pushbutton": [
-      "MM014"
-    ],
-    "MM_LAB.extension/MM Lab.tab/ИОС.panel/Доп расход 0.pushbutton": [
-      "MM003",
-      "MM004",
-      "MM006",
       "MM014"
     ],
     "MM_LAB.extension/MM Lab.tab/ИОС.panel/Сброс потерь.pushbutton": [
