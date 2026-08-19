@@ -75,6 +75,7 @@ Progress: [██████░░░░] 67%
 | 260724-win | Приёмка кнопки IFC_Окна: адаптация под конвенцию MM LAB, панель АРХИТЕКТУРА | 2026-07-24 | (pending) | [260724-win-adopt-ifc-okna](./quick/260724-win-adopt-ifc-okna/) |
 | 260724-abd | Приёмка кнопки IFC_Двери: адаптация под конвенцию MM LAB, панель АРХИТЕКТУРА | 2026-07-24 | (pending) | [260724-abd-adopt-ifc-dveri](./quick/260724-abd-adopt-ifc-dveri/) |
 | 260819-flw | Приёмка кнопки «Доп. расход 1»: адаптация под конвенцию MM LAB, панель ИОС | 2026-08-19 | (pending) | [260819-flw-adopt-dop-rashod-1](./quick/260819-flw-adopt-dop-rashod-1/) |
+| 260819-cad | Приёмка кнопки «Замена CAD-геометрии»: адаптация под конвенцию MM LAB, панель ИОС | 2026-08-19 | (pending) | [260819-cad-adopt-zamena-cad-geometrii](./quick/260819-cad-adopt-zamena-cad-geometrii/) |
 | Phase 03-convention P01 | 17 min | 2 tasks | 10 files |
 | Phase 03-convention P02 | 10 min | 2 tasks | 2 files |
 | Phase 03-convention P03 | 12 min | 2 tasks | 3 files |
