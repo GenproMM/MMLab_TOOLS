@@ -1,18 +1,28 @@
-﻿#! python3
+#! python3
 # -*- coding: utf-8 -*-
+"""Приточный по классификации
 
+Показывает найденные в проекте классификации систем воздуховодной сети
+и позволяет для каждой классификации выбрать: включить, выключить или не
+менять параметр «Приточный» у элементов с этой классификацией.
+
+Совместимость: Revit 2020 / 2022 / 2024
+Зависимости: нет
+"""
+
+__title__ = "Приточный\nпо классификации"
+__author__ = "GENPRO LAB"
+
+# Канонический lib-бутстрап (D-15).
 import os
 import sys
 
-__title__ = u"Вытяжка"
-__author__ = "MM Lab"
-__doc__ = u"Настраивает параметр «Приточный» по выбранным классификациям систем."
-
-SCRIPT_DIR = os.path.dirname(__file__)
-EXTENSION_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(SCRIPT_DIR)))
-LIB_DIR = os.path.join(EXTENSION_ROOT, "lib")
-if LIB_DIR not in sys.path:
-    sys.path.append(LIB_DIR)
+_SCRIPT_DIR = os.path.dirname(__file__)
+# pushbutton -> panel -> tab -> MM_LAB.extension
+_EXTENSION_DIR = os.path.normpath(os.path.join(_SCRIPT_DIR, "..", "..", ".."))
+_LIB_DIR = os.path.join(_EXTENSION_DIR, "lib")
+if os.path.isdir(_LIB_DIR) and _LIB_DIR not in sys.path:
+    sys.path.insert(0, _LIB_DIR)
 
 from Autodesk.Revit.DB import BuiltInCategory
 from Autodesk.Revit.DB import StorageType
@@ -34,21 +44,20 @@ from System.Windows.Forms import FormBorderStyle
 from System.Windows.Forms import FormStartPosition
 from System.Windows.Forms import Panel
 
+import revit_compat
 from ios_common_helpers import DECISION_TO_LABEL
 from ios_common_helpers import LABEL_TO_DECISION
 from ios_common_helpers import SupplyFlagDecision
 from ios_common_helpers import collect_elements
 from ios_common_helpers import get_default_supply_flag_decision
-from ios_common_helpers import get_document
 from ios_common_helpers import get_supply_flag_parameter
 from ios_common_helpers import get_system_classification
 from ios_common_helpers import is_writable
 from ios_common_helpers import normalize_text
-from ios_common_helpers import show_error
 from ios_common_helpers import to_text
 
 
-COMMAND_NAME = u"Вытяжка"
+COMMAND_NAME = u"Приточный по классификации"
 
 
 class SystemClassificationSelectionForm(Form):
@@ -170,76 +179,90 @@ def build_classification_options(targets):
     return options
 
 
+def main(doc):
+    """Точка входа: настраивает параметр «Приточный» по выбранным классификациям систем."""
+    revit_compat.require_supported_version(COMMAND_NAME)
+
+    targets = collect_elements(
+        doc,
+        BuiltInCategory.OST_DuctFitting,
+        BuiltInCategory.OST_DuctAccessory,
+        BuiltInCategory.OST_DuctTerminal,
+    )
+
+    options = build_classification_options(targets)
+    if not options:
+        TaskDialog.Show(COMMAND_NAME, u"В проекте не найдено классификаций систем для обработки.")
+        return
+
+    form = SystemClassificationSelectionForm(options)
+    try:
+        if form.ShowDialog() != DialogResult.OK:
+            return
+        options = form.get_selections()
+    finally:
+        form.Dispose()
+
+    selection_map = {}
+    for option in options:
+        selection_map[normalize_text(option["classification"])] = option["decision"]
+
+    updated_count = 0
+    unchanged_count = 0
+    skipped_count = 0
+
+    transaction = Transaction(doc, COMMAND_NAME)
+    transaction.Start()
+    try:
+        for element in targets:
+            classification = get_system_classification(element)
+            normalized = normalize_text(classification)
+            decision = selection_map.get(normalized)
+            if not normalized or decision is None or decision == SupplyFlagDecision.IGNORE:
+                skipped_count += 1
+                continue
+
+            parameter = get_supply_flag_parameter(element)
+            if not is_writable(parameter) or parameter.StorageType != StorageType.Integer:
+                skipped_count += 1
+                continue
+
+            target_value = 1 if decision == SupplyFlagDecision.SUPPLY else 0
+            if parameter.AsInteger() == target_value:
+                unchanged_count += 1
+                continue
+
+            parameter.Set(target_value)
+            updated_count += 1
+
+        transaction.Commit()
+    except Exception:
+        transaction.RollBack()
+        raise
+
+    TaskDialog.Show(
+        COMMAND_NAME,
+        u"Изменено: {0}\nБез изменений: {1}\nПропущено: {2}\nКлассификаций в настройке: {3}".format(
+            updated_count,
+            unchanged_count,
+            skipped_count,
+            len(options),
+        ),
+    )
+
+
+def _entry():
+    """Готовит doc/uidoc и вызывает main (doc/uidoc — параметрами, правило 18)."""
+    uidoc = __revit__.ActiveUIDocument
+    if uidoc is None or uidoc.Document is None:
+        TaskDialog.Show(COMMAND_NAME, u"Открой проект Revit и повтори команду.")
+        return
+    main(uidoc.Document)
+
+
 try:
-    doc = get_document(COMMAND_NAME)
-    if doc:
-        updated_count = 0
-        unchanged_count = 0
-        skipped_count = 0
-
-        targets = collect_elements(
-            doc,
-            BuiltInCategory.OST_DuctFitting,
-            BuiltInCategory.OST_DuctAccessory,
-            BuiltInCategory.OST_DuctTerminal,
-        )
-
-        options = build_classification_options(targets)
-        if not options:
-            TaskDialog.Show(COMMAND_NAME, u"В проекте не найдено классификаций систем для обработки.")
-        else:
-            form = SystemClassificationSelectionForm(options)
-            try:
-                if form.ShowDialog() != DialogResult.OK:
-                    raise SystemExit
-
-                options = form.get_selections()
-            finally:
-                form.Dispose()
-
-            selection_map = {}
-            for option in options:
-                selection_map[normalize_text(option["classification"])] = option["decision"]
-
-            transaction = Transaction(doc, COMMAND_NAME)
-            transaction.Start()
-            try:
-                for element in targets:
-                    classification = get_system_classification(element)
-                    normalized = normalize_text(classification)
-                    decision = selection_map.get(normalized)
-                    if not normalized or decision is None or decision == SupplyFlagDecision.IGNORE:
-                        skipped_count += 1
-                        continue
-
-                    parameter = get_supply_flag_parameter(element)
-                    if not is_writable(parameter) or parameter.StorageType != StorageType.Integer:
-                        skipped_count += 1
-                        continue
-
-                    target_value = 1 if decision == SupplyFlagDecision.SUPPLY else 0
-                    if parameter.AsInteger() == target_value:
-                        unchanged_count += 1
-                        continue
-
-                    parameter.Set(target_value)
-                    updated_count += 1
-
-                transaction.Commit()
-            except Exception:
-                transaction.RollBack()
-                raise
-
-            TaskDialog.Show(
-                COMMAND_NAME,
-                u"Изменено: {0}\nБез изменений: {1}\nПропущено: {2}\nКлассификаций в настройке: {3}".format(
-                    updated_count,
-                    unchanged_count,
-                    skipped_count,
-                    len(options),
-                ),
-            )
+    _entry()
 except SystemExit:
-    pass
+    pass  # require_supported_version уже показал свой диалог
 except Exception as ex:
-    show_error(COMMAND_NAME, ex)
+    TaskDialog.Show(COMMAND_NAME, u"Ошибка:\n{0}".format(ex))

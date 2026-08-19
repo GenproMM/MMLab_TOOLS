@@ -1,5 +1,7 @@
 title:
-  ru: "Приточный\nпо системе"
+  en_us: "Supply\nby classification"
+  ru: "Приточный\nпо классификации"
 tooltip:
+  en_us: "Shows the system classifications found in the project and lets you set the Supply parameter per classification"
   ru: "Показывает найденные в проекте классификации систем и позволяет выбрать, где параметр «Приточный» включать, выключать или не менять."
-author: "MM LAB"
+author: "GENPRO LAB"
