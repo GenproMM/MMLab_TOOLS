@@ -30,7 +30,7 @@ except NameError:
 
 # Метка версии модуля: помогает поймать ситуацию, когда pyRevit держит
 # в sys.modules старую копию lib и правки не подхватились без перезапуска.
-LIB_VERSION = u"2026-08-20-lossmethodname"
+LIB_VERSION = u"2026-08-20-additionalflowfix"
 
 
 UNDEFINED_LABELS = set([u"неопределено", u"notdefined"])
@@ -444,12 +444,13 @@ def set_additional_flow_value(document, target_value):
     updated_count = 0
 
     for element in collect_additional_flow_elements(document):
-        # LookupParameter по имени из ParameterElement — без перегрузок get_Parameter.
-        name = _bip_to_lookup_name(document, BuiltInParameter.RBS_ADDITIONAL_FLOW)
-        if name:
-            parameter = element.LookupParameter(name)
-        else:
-            parameter = get_parameter_by_names(element, "Additional Flow", u"Доп. расход")
+        # get_parameter() каскадно падает на get_parameter_by_names(), если имя,
+        # резолвленное из ParameterElement, не находит параметр именно на этом
+        # элементе (LookupParameter(resolved_name) вернул None) — раньше здесь был
+        # инлайн-дубликат этой логики без каскада: элемент пропускался целиком,
+        # даже когда «Доп. расход»/«Additional Flow» реально присутствовал —
+        # 0 обновлений при подтверждённо верном имени параметра.
+        parameter = get_parameter(element, BuiltInParameter.RBS_ADDITIONAL_FLOW, "Additional Flow", u"Доп. расход")
 
         if not is_writable(parameter) or parameter.StorageType != StorageType.Double:
             continue
