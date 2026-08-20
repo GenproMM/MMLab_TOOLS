@@ -30,7 +30,7 @@ except NameError:
 
 # Метка версии модуля: помогает поймать ситуацию, когда pyRevit держит
 # в sys.modules старую копию lib и правки не подхватились без перезапуска.
-LIB_VERSION = u"2026-08-19-connfix"
+LIB_VERSION = u"2026-08-20-lossmethodname"
 
 
 UNDEFINED_LABELS = set([u"неопределено", u"notdefined"])
@@ -278,9 +278,16 @@ def get_loss_method_parameters(element):
     # для метода расчёта потерь: покрывает и duct fitting, и duct accessory (Autodesk API).
     # RBS_DUCT_LOSS_METHOD_SERVER_PARAM и RBS_DUCT_TERMINAL_LOSS_METHOD_SERVER_PARAM
     # не существуют в BuiltInParameter — их использование вызывало AttributeError.
+    # _bip_to_lookup_name не резолвит имя для этого BIP (нет ParameterElement в doc),
+    # поэтому реальное имя элемента (как в UI, README, bundle.yaml — «Метод определения
+    # потерь») обязано быть в списке имён fallback-поиска; старое «Метод расчета потерь»
+    # под этим именем параметр не находило — 0 обновлений при 2183 пропущенных.
     parameters = []
     for built_in_parameter, names in [
-        (BuiltInParameter.RBS_DUCT_FITTING_LOSS_METHOD_SERVER_PARAM, [u"Метод расчета потерь", u"Loss Method"]),
+        (
+            BuiltInParameter.RBS_DUCT_FITTING_LOSS_METHOD_SERVER_PARAM,
+            [u"Метод определения потерь", u"Метод расчета потерь", u"Loss Method"],
+        ),
     ]:
         parameter = get_parameter(element, built_in_parameter, *names)
         if parameter is not None:

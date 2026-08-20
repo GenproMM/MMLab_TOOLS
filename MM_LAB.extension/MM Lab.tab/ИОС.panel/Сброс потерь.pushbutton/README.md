@@ -27,11 +27,15 @@
 
 | Параметр | Назначение |
 |----------|------------|
-| «Метод расчета потерь» (`RBS_DUCT_FITTING_LOSS_METHOD_SERVER_PARAM`) | сбрасывается на «Не определено» у фитингов и арматуры воздуховодов |
+| «Метод определения потерь» (`RBS_DUCT_FITTING_LOSS_METHOD_SERVER_PARAM`) | сбрасывается на «Не определено» у фитингов и арматуры воздуховодов |
 
-Параметр резолвится по `BuiltInParameter.RBS_DUCT_FITTING_LOSS_METHOD_SERVER_PARAM`
-через `ios_common_helpers` (`LookupParameter` по имени из `ParameterElement`,
-без строковых литералов в самом скрипте кнопки).
+Для этого BuiltInParameter `_bip_to_lookup_name` не находит `ParameterElement`
+в документе (нет резолвящегося имени через `ElementId`), поэтому
+`ios_common_helpers.get_loss_method_parameters` ищет параметр по списку
+локализованных имён (`LookupParameter` без строковых литералов в самом
+скрипте кнопки) — первым и основным именем указано «Метод определения
+потерь» (как в UI Revit), «Метод расчета потерь» и «Loss Method» оставлены
+как дополнительный fallback.
 
 ## Зависимости
 
