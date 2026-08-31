@@ -79,6 +79,7 @@ Progress: [██████░░░░] 67%
 | 260819-cfz | Приёмка кнопки «Конфузор-Диффузор»: адаптация под конвенцию MM LAB, панель ИОС | 2026-08-19 | (pending) | [260819-cfz-adopt-konfuzor-diffuzor](./quick/260819-cfz-adopt-konfuzor-diffuzor/) |
 | 260819-ptc | Приёмка кнопки «Приточный по классификации»: адаптация под конвенцию MM LAB, панель ИОС | 2026-08-19 | (pending) | [260819-ptc-adopt-supply-classification](./quick/260819-ptc-adopt-supply-classification/) |
 | 260819-adp | Приёмка кнопки «Доп. расход 0»: адаптация под конвенцию MM LAB, панель ИОС | 2026-08-19 | (pending) | [260819-adp-adopt-dop-raskhod-0](./quick/260819-adp-adopt-dop-raskhod-0/) |
+| 260831-flr | Приёмка кнопки IFC_Перекрытия: адаптация под конвенцию MM LAB, панель АРХИТЕКТУРА | 2026-08-31 | (pending) | [260831-flr-adopt-ifc-perekrytiya](./quick/260831-flr-adopt-ifc-perekrytiya/) |
 | Phase 03-convention P01 | 17 min | 2 tasks | 10 files |
 | Phase 03-convention P02 | 10 min | 2 tasks | 2 files |
 | Phase 03-convention P03 | 12 min | 2 tasks | 3 files |
