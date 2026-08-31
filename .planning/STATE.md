@@ -81,6 +81,7 @@ Progress: [██████░░░░] 67%
 | 260819-adp | Приёмка кнопки «Доп. расход 0»: адаптация под конвенцию MM LAB, панель ИОС | 2026-08-19 | (pending) | [260819-adp-adopt-dop-raskhod-0](./quick/260819-adp-adopt-dop-raskhod-0/) |
 | 260831-flr | Приёмка кнопки IFC_Перекрытия: адаптация под конвенцию MM LAB, панель АРХИТЕКТУРА | 2026-08-31 | (pending) | [260831-flr-adopt-ifc-perekrytiya](./quick/260831-flr-adopt-ifc-perekrytiya/) |
 | 260831-wal | Приёмка кнопки IFC_Стены: адаптация под конвенцию MM LAB, панель АРХИТЕКТУРА | 2026-08-31 | (pending) | [260831-wal-adopt-ifc-steny](./quick/260831-wal-adopt-ifc-steny/) |
+| 260831-rte | Приёмка кнопки ПубликацияШаблона: адаптация под конвенцию MM LAB, панель КООРДИНАЦИЯ | 2026-08-31 | (pending) | [260831-rte-adopt-publikatsiya-shablona](./quick/260831-rte-adopt-publikatsiya-shablona/) |
 | Phase 03-convention P01 | 17 min | 2 tasks | 10 files |
 | Phase 03-convention P02 | 10 min | 2 tasks | 2 files |
 | Phase 03-convention P03 | 12 min | 2 tasks | 3 files |

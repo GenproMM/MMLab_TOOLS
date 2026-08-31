@@ -1,0 +1,7 @@
+title:
+  en_us: "Publish\nTemplate"
+  ru: "Публикация\nШаблона"
+tooltip:
+  en_us: "Exports the current .rvt project to a .rte template in the shared templates folder"
+  ru: "Экспортирует текущий проект .rvt в шаблон .rte в общую папку публикаций"
+author: "MM LAB"
