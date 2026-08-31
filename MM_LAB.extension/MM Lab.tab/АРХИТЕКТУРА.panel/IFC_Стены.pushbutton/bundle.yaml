@@ -1,0 +1,7 @@
+title:
+  en_us: "IFC\nWalls"
+  ru: "IFC\nСтены"
+tooltip:
+  en_us: "Classifies walls by MSSK and fills GP_01 code/name shared parameters"
+  ru: "Классифицирует стены по МССК и заполняет общие параметры GP_01 (код и имя)"
+author: "GENPRO LAB"
